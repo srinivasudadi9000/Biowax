@@ -17,7 +17,7 @@ public class Splash extends Activity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent login = new Intent(Splash.this, Login.class);
+                Intent login = new Intent(Splash.this, Home.class);
                 startActivity(login);
             }
         }, 2000);

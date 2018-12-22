@@ -1,10 +1,13 @@
 package com.srinivas.biowax;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -14,10 +17,10 @@ import me.relex.circleindicator.CircleIndicator;
 public class Home extends Activity {
 
     ViewPager viewPager;
-    int images[] = {R.drawable.image1, R.drawable.image2, R.drawable.image3, R.drawable.image4,R.drawable.image5,R.drawable.image6};
+    int images[] = {R.drawable.image4, R.drawable.image2, R.drawable.image3, R.drawable.image4,R.drawable.image5,R.drawable.image6};
     MyCustomPagerAdapter myCustomPagerAdapter;
     int currentPage = 0;
-
+    TextView skip_tv;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,13 +44,22 @@ public class Home extends Activity {
                 viewPager.setCurrentItem(currentPage++, true);
             }
         };
-        Timer swipeTimer = new Timer();
+
+        skip_tv = findViewById(R.id.skip_tv);
+        skip_tv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent subhome = new Intent(Home.this,Login.class);
+                startActivity(subhome);
+            }
+        });
+       /* Timer swipeTimer = new Timer();
         swipeTimer.schedule(new TimerTask() {
             @Override
             public void run() {
                 handler.post(Update);
             }
-        }, 2500, 2500);
+        }, 2500, 2500);*/
 
     }
 }

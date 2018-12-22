@@ -6,13 +6,17 @@
     android:weightSum="3">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:src="@drawable/image3"
+         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:scaleType="fitXY" />
 
     <TextView
+        android:fontFamily="sans-serif"
+        android:textSize="20dp"
+        android:padding="10dp"
         android:textColor="@color/white"
         android:background="@color/black"
         android:id="@+id/description_tv"

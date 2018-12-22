@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/switch_thumb"
     android:orientation="vertical"
     tools:context=".Dashboard">
 
@@ -17,6 +16,7 @@
         android:textSize="25dp"
         android:textStyle="bold" />
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="120dp"
@@ -25,6 +25,8 @@
         android:weightSum="3">
 
         <LinearLayout
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
@@ -47,7 +49,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="1dp"
+                android:layout_marginBottom="8dp"
                 android:layout_weight="1.5"
                 android:gravity="center"
                 android:text="Garbage "
@@ -58,7 +60,8 @@
         </LinearLayout>
 
         <LinearLayout
-
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
@@ -81,6 +84,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:layout_weight="1.5"
                 android:gravity="center"
                 android:text="History"
@@ -91,6 +95,8 @@
         </LinearLayout>
 
         <LinearLayout
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
@@ -113,6 +119,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:layout_weight="1.5"
                 android:gravity="center"
                 android:text="Map View"
@@ -131,6 +138,8 @@
         android:weightSum="3">
 
         <LinearLayout
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
@@ -153,6 +162,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:layout_weight="1.5"
                 android:gravity="center"
                 android:text="Driver Info "
@@ -163,6 +173,8 @@
         </LinearLayout>
 
         <LinearLayout
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
@@ -185,6 +197,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:layout_weight="1.5"
                 android:gravity="center"
                 android:text="Receipt"
@@ -195,6 +208,8 @@
         </LinearLayout>
 
         <LinearLayout
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
@@ -217,6 +232,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:layout_weight="1.5"
                 android:gravity="center"
                 android:text="Logout"

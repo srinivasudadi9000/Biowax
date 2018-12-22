@@ -13,7 +13,12 @@ public class MyCustomPagerAdapter extends PagerAdapter{
     Context context;
     int images[];
     LayoutInflater layoutInflater;
-    String des[] = {"first","second","third","fourth","fifth","sixth"};
+    String des[] = {"Bio Waste Disposal having some advantages It will helps to save environment",
+            "Bio Waste Disposal having some advantages It will helps to save environment and this is maintained by schemax",
+            "Bio Waste Disposal having some advantages It will helps to save environment .some disposable items can't convert to mould",
+            "Bio Waste Disposal material wastage,bulk injections ,cotton material etc.,",
+            "Disposalble Items can take place and preserve and disposable to maintained temperature .it will save environament",
+            "Disposalble Items can take place and preserve and disposable to maintained temperature .it will save environament"};
 
     public MyCustomPagerAdapter(Context context, int images[]) {
         this.context = context;

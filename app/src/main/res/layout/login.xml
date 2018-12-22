@@ -5,18 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:background="@drawable/switch_thumb"
     android:gravity="center"
     android:orientation="vertical"
     tools:context=".Login">
 
-
     <com.srinivas.biowax.CircularImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="15dp"
-        android:src="@drawable/biowaxx" />
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/bio_logo" />
+
 
     <TextView
         android:layout_width="match_parent"
@@ -36,13 +33,15 @@
         android:textStyle="bold" />
 
     <Button
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
         android:id="@+id/login_btn"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="20dp"
         android:layout_marginRight="8dp"
-        android:background="#FF144F"
+        android:background="@drawable/yellowbutton"
         android:text="login"
         android:textColor="@color/white"
         android:textStyle="bold" />
