@@ -35,6 +35,7 @@
             android:layout_marginBottom="5dp"
             android:layout_weight="1"
             android:background="@drawable/border"
+            android:id="@+id/garbage_ll"
             android:orientation="vertical"
             android:weightSum="2">
 
@@ -67,6 +68,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
             android:layout_marginRight="10dp"
+            android:id="@+id/history_ll"
             android:layout_marginBottom="5dp"
             android:layout_weight="1"
             android:background="@drawable/border"
@@ -95,6 +97,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/mapview_ll"
             android:clickable="true"
             android:foreground="?android:attr/selectableItemBackground"
             android:layout_width="match_parent"
@@ -138,6 +141,7 @@
         android:weightSum="3">
 
         <LinearLayout
+            android:id="@+id/driverinfo_ll"
             android:clickable="true"
             android:foreground="?android:attr/selectableItemBackground"
             android:layout_width="match_parent"
@@ -173,6 +177,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/receipt_ll"
             android:clickable="true"
             android:foreground="?android:attr/selectableItemBackground"
             android:layout_width="match_parent"
@@ -208,6 +213,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/logout_ll"
             android:clickable="true"
             android:foreground="?android:attr/selectableItemBackground"
             android:layout_width="match_parent"
