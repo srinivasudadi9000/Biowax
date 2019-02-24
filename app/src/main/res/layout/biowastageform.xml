@@ -232,7 +232,7 @@
                     android:layout_height="wrap_content"
                     android:backgroundTint="@android:color/black"
                     android:ellipsize="start"
-                    android:hint="Logitde"
+                    android:hint="Logitude"
                     android:inputType="text"
                     android:textColor="@color/black"
                     android:textColorHighlight="@color/black"
@@ -336,30 +336,52 @@
                     android:textColorLink="@color/black" />
             </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
+            <TextView
+                android:id="@+id/is_sagregation_completed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="25dp"
-                android:layout_weight="1"
+                android:backgroundTint="@android:color/black"
+                android:ellipsize="start"
+                android:hint="Is Sagregation Completed ?"
+                android:textColor="@color/black"
+                android:textColorHighlight="@color/black"
                 android:textColorHint="@color/black"
-                app:boxBackgroundColor="@color/black">
+                android:textColorLink="@color/black"
+                android:textSize="18dp" />
 
-                <EditText
-                    android:id="@+id/is_sagregation_completed"
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="25dp"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <RadioButton
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@android:color/black"
-                    android:ellipsize="start"
-                    android:hint="Is Sagregation Completed ?"
-                    android:inputType="text"
-                    android:textColor="@color/black"
-                    android:textColorHighlight="@color/black"
-                    android:textColorHint="@color/black"
-                    android:textColorLink="@color/black" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_weight="1"
+                    android:text="Yes" />
 
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="No" />
+            </RadioGroup>
+
+
+            <ImageView
+                android:src="@drawable/icon_cptu"
+                android:layout_marginBottom="50dp"
+                android:layout_gravity="center"
+                android:id="@+id/waste_image"
+                android:layout_width="100dp"
+                android:layout_height="100dp" />
 
         </LinearLayout>
 

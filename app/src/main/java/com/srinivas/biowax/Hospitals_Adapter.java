@@ -39,6 +39,7 @@ public class Hospitals_Adapter extends RecyclerView.Adapter<Hospitals_Adapter.Ho
             @Override
             public void onClick(View v) {
                 Intent biowaxform = new Intent(context,Biowastageform.class);
+                biowaxform.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(biowaxform);
             }
         });

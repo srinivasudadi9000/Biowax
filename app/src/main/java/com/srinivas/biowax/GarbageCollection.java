@@ -1,5 +1,6 @@
 package com.srinivas.biowax;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.SharedPreferences;
@@ -75,7 +76,7 @@ public class GarbageCollection extends Activity {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA,
-                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,
                     android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION,
                     android.Manifest.permission.ACCESS_NETWORK_STATE}, 0);
         }
