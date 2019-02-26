@@ -27,8 +27,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Barcodescanner"></activity>
+        <activity android:name=".History_View"></activity>
+        <activity android:name=".Barcodescanner" />
         <activity android:name=".Biowastageform" />
+        <activity android:name=".GarbageHistory" />
         <activity android:name=".Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

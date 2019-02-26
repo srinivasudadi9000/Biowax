@@ -54,6 +54,8 @@ public class Dashboard extends Activity implements View.OnClickListener {
                 startActivity(garbagecollection);
                 break;
             case R.id.history_ll:
+                Intent garbageHistory = new Intent(Dashboard.this,GarbageHistory.class);
+                startActivity(garbageHistory);
                 break;
             case R.id.mapview_ll:
                 break;
