@@ -1,19 +1,37 @@
 package com.srinivas.biowax;
 
 public class Hospitals {
-    String h_name,h_code,h_address;
+    String h_name,h_code,h_address,route_name,mobile;
     Double h_lat,h_long;
 
-    public Hospitals(String h_name, String h_code, Double h_lat, Double h_long, String h_address) {
+    public Hospitals(String h_name, String h_code, Double h_lat, Double h_long, String h_address,String route_name,String mobile) {
         this.h_name = h_name;
         this.h_code = h_code;
         this.h_lat = h_lat;
         this.h_long = h_long;
         this.h_address = h_address;
+        this.route_name = route_name;
+        this.mobile = mobile;
+    }
+
+    public String getRoute_name() {
+        return route_name;
+    }
+
+    public void setRoute_name(String route_name) {
+        this.route_name = route_name;
     }
 
     public String getH_name() {
         return h_name;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 
     public void setH_name(String h_name) {

@@ -50,12 +50,12 @@ public class GarbageHistory extends Activity {
         latitude_tv = findViewById(R.id.latitude_tv);
 
         checkins = new ArrayList<Hospitals>();
-        checkins.add(new Hospitals("BARCODE-84", "20", 17.701001, 82.998878, "visakhapatnam"));
+       /* checkins.add(new Hospitals("BARCODE-84", "20", 17.701001, 82.998878, "visakhapatnam"));
         checkins.add(new Hospitals("BARCODE-85", "21", 17.704581, 82.997954, "visakhapatnam"));
         checkins.add(new Hospitals("BARCODE-86", "22", 17.702920, 82.998180, "visakhapatnam"));
         checkins.add(new Hospitals("BARCODE-87", "23", 17.700445, 82.997803, "visakhapatnam"));
         checkins.add(new Hospitals("BARCODE-88", "24", 17.6998393, 82.9986091, "visakhapatnam"));
-
+*/
         hospitals_adapter = new Histroy_Adapter(checkins, R.layout.history_single, getApplicationContext());
         hospitalb_rv.setAdapter(hospitals_adapter);
       /*  try {
@@ -108,11 +108,11 @@ public class GarbageHistory extends Activity {
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject res = jsonArray.getJSONObject(i);
                                 JSONObject hos = res.getJSONObject("hcf_master");
-                                checkins.add(new Hospitals(hos.getString("facility_name"),
+                                /*checkins.add(new Hospitals(hos.getString("facility_name"),
                                         hos.getString("hcf_unique_code"),
                                         Double.valueOf(hos.getString("hcf_longitude")),
                                         Double.valueOf(hos.getString("hcf_lattitudue"))
-                                        , hos.getString("hcf_address")));
+                                        , hos.getString("hcf_address")));*/
                             }
 
 

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/building"
     tools:context=".Splash">
 
     <RelativeLayout
@@ -23,6 +24,7 @@
                 android:src="@drawable/bio_logo" />
 
             <TextView
+                android:textColor="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:foregroundGravity="center"

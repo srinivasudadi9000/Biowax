@@ -34,7 +34,7 @@ import okhttp3.RequestBody;
 
 import static android.content.ContentValues.TAG;
 
-public class GarbageCollection extends Activity {
+public class GarbageCollection extends Activity implements View.OnClickListener {
     RecyclerView hospitalb_rv;
 
     ArrayList<Hospitals> checkins, checkins_filter;
@@ -42,33 +42,36 @@ public class GarbageCollection extends Activity {
     Handler handler;
     private Runnable mRunnable;
     TextView latitude_tv, longitude_tv;
+    ImageView myimage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.garbage_collection);
         hospitalb_rv = findViewById(R.id.hospitalb_rv);
+        myimage = findViewById(R.id.myimage);
+        myimage.setOnClickListener(this);
         hospitalb_rv.setLayoutManager(new LinearLayoutManager(this));
         longitude_tv = findViewById(R.id.longitude_tv);
         latitude_tv = findViewById(R.id.latitude_tv);
-        try {
+       /* try {
             getRoutes();
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
         checkins = new ArrayList<Hospitals>();
         checkins_filter = new ArrayList<Hospitals>();
-        checkins.add(new Hospitals("Dadi veerinaidu college", "1002", 17.701001, 82.998878, "visakhapatnam"));
-        checkins.add(new Hospitals("Lakshmi ganapathi temple", "1002", 17.704581, 82.997954, "visakhapatnam"));
-        checkins.add(new Hospitals("Union Bank of india", "1002", 17.702920, 82.998180, "visakhapatnam"));
-        checkins.add(new Hospitals("Sai baba temple", "1002", 17.700445, 82.997803, "visakhapatnam"));
-        checkins.add(new Hospitals("Real Choice", "1002", 17.6998393, 82.9986091, "visakhapatnam"));
-        checkins.add(new Hospitals("post office thummapala", "1002", 17.721465, 82.965939, "visakhapatnam"));
-        checkins.add(new Hospitals("Penna4 office", "1002", 17.741711, 83.3261952, "visakhapatnam"));
-        checkins.add(new Hospitals("Indian Oil petrol bunk", "1002", 17.7390317, 83.3206353, "visakhapatnam"));
-        checkins.add(new Hospitals("Enadu office", "1002", 17.7391631, 83.3109891, "visakhapatnam"));
-        checkins.add(new Hospitals("Maddipalem junction", "1002", 17.7362124, 83.3182955, "visakhapatnam"));
-        checkins.add(new Hospitals("Gurudwara Junction", "1002", 17.7368127, 83.3051191, "visakhapatnam"));
+        checkins.add(new Hospitals("Dadi veerinaidu college", "1002", 17.701001, 82.998878, "visakhapatnam", "Lane1", "8885270193"));
+        checkins.add(new Hospitals("Lakshmi ganapathi temple", "1002", 17.704581, 82.997954, "visakhapatnam", "Lane2", "8885270193"));
+        checkins.add(new Hospitals("Union Bank of india", "1002", 17.702920, 82.998180, "visakhapatnam", "Route3", "8885270193"));
+        checkins.add(new Hospitals("Sai baba temple", "1002", 17.700445, 82.997803, "visakhapatnam", "Route4", "8885270193"));
+        checkins.add(new Hospitals("Real Choice", "1002", 17.6998393, 82.9986091, "visakhapatnam", "Route5", "8885270193"));
+        checkins.add(new Hospitals("post office thummapala", "1002", 17.721465, 82.965939, "visakhapatnam", "Route 6 ", "8885270193"));
+        checkins.add(new Hospitals("Penna4 office", "1002", 17.741711, 83.3261952, "visakhapatnam", "Route 7", "8885270193"));
+        checkins.add(new Hospitals("Indian Oil petrol bunk", "1002", 17.7390317, 83.3206353, "visakhapatnam", "Route 8", "8885270193"));
+        checkins.add(new Hospitals("Enadu office", "1002", 17.7391631, 83.3109891, "visakhapatnam", "Route 9", "8885270193"));
+        checkins.add(new Hospitals("Maddipalem junction", "1002", 17.7362124, 83.3182955, "visakhapatnam", "Route 9", "8885270193"));
+        checkins.add(new Hospitals("Gurudwara Junction", "1002", 17.7368127, 83.3051191, "visakhapatnam", "Route 5", "8885270193"));
        /* hospitals_adapter = new Hospitals_Adapter(checkins, R.layout.hostpital_single, getApplicationContext());
         hospitalb_rv.setAdapter(hospitals_adapter);
         hospitals_adapter.notifyDataSetChanged();
@@ -106,6 +109,12 @@ public class GarbageCollection extends Activity {
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Log.v(TAG, "Permission: " + permissions[0] + "was " + grantResults[0]);
             //resume tasks needing this permission
+
+            try {
+                getRoutes();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -142,7 +151,9 @@ public class GarbageCollection extends Activity {
             if (distance(startPoint.getLatitude(), startPoint.getLongitude(),
                     checkins.get(i).getH_lat(), checkins.get(i).getH_long()) < 3) {
                 System.out.println("Location update " + checkins.get(i).getH_name());
-                checkins_filter.add(new Hospitals(checkins.get(i).getH_name(), checkins.get(i).getH_code(), checkins.get(i).getH_lat(), checkins.get(i).getH_long(), checkins.get(i).getH_address()));
+                checkins_filter.add(new Hospitals(checkins.get(i).getH_name(), checkins.get(i).getH_code(),
+                        checkins.get(i).getH_lat(), checkins.get(i).getH_long(), checkins.get(i).getH_address(),
+                        checkins.get(i).getRoute_name(), checkins.get(i).getMobile()));
               /*  hospitals_adapter = new Hospitals_Adapter(checkins_filter, R.layout.hostpital_single, getApplicationContext());
                 hospitalb_rv.setAdapter(hospitals_adapter);
                 hospitals_adapter.notifyDataSetChanged();
@@ -217,12 +228,15 @@ public class GarbageCollection extends Activity {
                             JSONArray jsonArray = obj.getJSONArray("data");
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject res = jsonArray.getJSONObject(i);
+                                JSONObject routes_master = res.getJSONObject("routes_master");
+
                                 JSONObject hos = res.getJSONObject("hcf_master");
                                 checkins.add(new Hospitals(hos.getString("facility_name"),
                                         hos.getString("hcf_unique_code"),
                                         Double.valueOf(hos.getString("hcf_longitude")),
                                         Double.valueOf(hos.getString("hcf_lattitudue"))
-                                        , hos.getString("hcf_address")));
+                                        , hos.getString("hcf_address"), routes_master.getString("route_name"),
+                                        hos.getString("contact_number")));
                             }
 
 
@@ -270,4 +284,12 @@ public class GarbageCollection extends Activity {
     }
 
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.myimage:
+                finish();
+                break;
+        }
+    }
 }

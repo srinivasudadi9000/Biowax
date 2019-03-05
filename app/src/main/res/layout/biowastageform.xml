@@ -11,12 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="65dp"
         android:background="@color/colorPrimary"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:weightSum="2.5">
 
         <ImageView
             android:id="@+id/myimage_back"
-            android:layout_width="65dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:padding="10dp"
             android:src="@drawable/back" />
 
@@ -24,11 +26,19 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginRight="30dp"
+            android:layout_weight=".5"
             android:gravity="center"
             android:text="Bio-Wastage Form"
             android:textColor="@color/white"
             android:textSize="18dp"
             android:textStyle="bold" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:src="@drawable/done" />
 
     </LinearLayout>
 
@@ -49,6 +59,7 @@
                 android:layout_marginTop="15dp"
                 android:src="@drawable/qrcode" />
 
+
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -56,17 +67,17 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="25dp"
                 android:layout_weight="1"
-                android:textColorHint="@color/black"
-                app:boxBackgroundColor="@color/black">
+                android:textColorHint="@color/black">
 
                 <EditText
                     android:id="@+id/waste_collection_date"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@android:color/black"
+                    android:layout_height="50dp"
+                    android:background="@drawable/border"
                     android:ellipsize="start"
                     android:hint="Wastage collection date"
                     android:inputType="text"
+                    android:paddingLeft="10dp"
                     android:textColor="@color/black"
                     android:textColorHighlight="@color/black"
                     android:textColorHint="@color/black"
@@ -86,11 +97,12 @@
                 <EditText
                     android:id="@+id/barcodeNumber"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@android:color/black"
+                    android:layout_height="50dp"
+                    android:background="@drawable/border"
                     android:ellipsize="start"
                     android:hint="Barcode Number"
                     android:inputType="text"
+                    android:paddingLeft="10dp"
                     android:textColor="@color/black"
                     android:textColorHighlight="@color/black"
                     android:textColorHint="@color/black"
@@ -110,11 +122,12 @@
                 <EditText
                     android:id="@+id/cover_color_id"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@android:color/black"
+                    android:layout_height="50dp"
+                    android:background="@drawable/border"
                     android:ellipsize="start"
                     android:hint="Cover Color Id"
                     android:inputType="text"
+                    android:paddingLeft="10dp"
                     android:textColor="@color/black"
                     android:textColorHighlight="@color/black"
                     android:textColorHint="@color/black"
@@ -134,11 +147,12 @@
                 <EditText
                     android:id="@+id/is_approval_required"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@android:color/black"
+                    android:layout_height="50dp"
+                    android:background="@drawable/border"
                     android:ellipsize="start"
-                    android:hint="Is Approval "
+                    android:hint="Is Approval Yes/No "
                     android:inputType="text"
+                    android:paddingLeft="10dp"
                     android:textColor="@color/black"
                     android:textColorHighlight="@color/black"
                     android:textColorHint="@color/black"
@@ -158,11 +172,12 @@
                 <EditText
                     android:id="@+id/approved_by"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@android:color/black"
+                    android:layout_height="50dp"
+                    android:background="@drawable/border"
                     android:ellipsize="start"
                     android:hint="Approved By"
                     android:inputType="text"
+                    android:paddingLeft="10dp"
                     android:textColor="@color/black"
                     android:textColorHighlight="@color/black"
                     android:textColorHint="@color/black"
@@ -182,11 +197,12 @@
                 <EditText
                     android:id="@+id/bag_weight_in_hcf"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@android:color/black"
+                    android:layout_height="50dp"
+                    android:background="@drawable/border"
                     android:ellipsize="start"
                     android:hint="Bag Weight"
-                    android:inputType="text"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="10dp"
                     android:textColor="@color/black"
                     android:textColorHighlight="@color/black"
                     android:textColorHint="@color/black"
@@ -206,11 +222,12 @@
                 <EditText
                     android:id="@+id/Latitude"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@android:color/black"
+                    android:layout_height="50dp"
+                    android:background="@drawable/border"
                     android:ellipsize="start"
                     android:hint="Latitude"
                     android:inputType="text"
+                    android:paddingLeft="10dp"
                     android:textColor="@color/black"
                     android:textColorHighlight="@color/black"
                     android:textColorHint="@color/black"
@@ -230,11 +247,12 @@
                 <EditText
                     android:id="@+id/longitude"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@android:color/black"
+                    android:layout_height="50dp"
+                    android:background="@drawable/border"
                     android:ellipsize="start"
                     android:hint="Logitude"
                     android:inputType="text"
+                    android:paddingLeft="10dp"
                     android:textColor="@color/black"
                     android:textColorHighlight="@color/black"
                     android:textColorHint="@color/black"
@@ -254,11 +272,12 @@
                 <EditText
                     android:id="@+id/is_manual_input"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@android:color/black"
+                    android:layout_height="50dp"
+                    android:background="@drawable/border"
                     android:ellipsize="start"
-                    android:hint="Is Input Manual"
+                    android:hint="Is Input Manual Yes / No"
                     android:inputType="text"
+                    android:paddingLeft="10dp"
                     android:textColor="@color/black"
                     android:textColorHighlight="@color/black"
                     android:textColorHint="@color/black"
@@ -278,11 +297,12 @@
                 <EditText
                     android:id="@+id/hcf_authorized_person_name"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@android:color/black"
+                    android:layout_height="50dp"
+                    android:background="@drawable/border"
                     android:ellipsize="start"
                     android:hint="Authorized Person Name"
                     android:inputType="text"
+                    android:paddingLeft="10dp"
                     android:textColor="@color/black"
                     android:textColorHighlight="@color/black"
                     android:textColorHint="@color/black"
@@ -302,11 +322,12 @@
                 <EditText
                     android:id="@+id/driver_id"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@android:color/black"
+                    android:layout_height="50dp"
+                    android:background="@drawable/border"
                     android:ellipsize="start"
                     android:hint="Driver ID"
                     android:inputType="text"
+                    android:paddingLeft="10dp"
                     android:textColor="@color/black"
                     android:textColorHighlight="@color/black"
                     android:textColorHint="@color/black"
@@ -326,11 +347,12 @@
                 <EditText
                     android:id="@+id/driver_imei_number"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@android:color/black"
+                    android:layout_height="50dp"
+                    android:background="@drawable/border"
                     android:ellipsize="start"
                     android:hint="Driver IMEI Number"
                     android:inputType="text"
+                    android:paddingLeft="10dp"
                     android:textColor="@color/black"
                     android:textColorHighlight="@color/black"
                     android:textColorHint="@color/black"
@@ -377,13 +399,13 @@
 
 
             <ImageView
-                android:visibility="gone"
-                android:src="@drawable/icon_cptu"
-                android:layout_marginBottom="50dp"
-                android:layout_gravity="center"
                 android:id="@+id/waste_image"
                 android:layout_width="100dp"
-                android:layout_height="100dp" />
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="50dp"
+                android:src="@drawable/dustbin"
+                android:visibility="gone" />
 
         </LinearLayout>
 

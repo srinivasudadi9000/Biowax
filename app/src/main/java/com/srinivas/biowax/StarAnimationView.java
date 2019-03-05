@@ -80,7 +80,7 @@ public class StarAnimationView extends View {
     }
 
     private void init() {
-        mDrawable = ContextCompat.getDrawable(getContext(), R.drawable.sketscope);
+        mDrawable = ContextCompat.getDrawable(getContext(), R.drawable.bin);
         mBaseSize = Math.max(mDrawable.getIntrinsicWidth(), mDrawable.getIntrinsicHeight()) / 2f;
         mBaseSpeed = BASE_SPEED_DP_PER_S * getResources().getDisplayMetrics().density;
     }

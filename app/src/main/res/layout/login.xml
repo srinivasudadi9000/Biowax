@@ -5,45 +5,183 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
+    android:background="@drawable/login"
     android:gravity="center"
     android:orientation="vertical"
+    android:weightSum="2"
     tools:context=".Login">
 
-    <com.srinivas.biowax.CircularImageView
+    <ImageView
         android:layout_width="150dp"
         android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
         android:src="@drawable/bio_logo" />
 
+    <com.srinivas.Spin.LoadingSpin
+        android:id="@+id/spinn"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:foregroundGravity="center"
+        android:visibility="gone" />
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
         android:gravity="center"
-        android:text="Login"
+        android:text="BIOWAX"
+        android:textColor="@color/white"
         android:textSize="25dp"
         android:textStyle="bold" />
 
-    <EditText
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="10dp"
-        android:text="Vehicle NO"
-        android:textStyle="bold" />
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="8dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="45dp"
+            android:layout_gravity="bottom"
+            android:layout_marginLeft="10dp"
+            android:paddingLeft="8dp"
+            android:src="@drawable/car" />
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:textColorHint="@color/white"
+            app:boxBackgroundColor="@color/white">
+
+            <EditText
+                android:id="@+id/driver_imei_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@android:color/white"
+                android:ellipsize="start"
+                android:hint="Driver phone number"
+                android:inputType="text"
+                android:textColor="@color/white"
+                android:textColorHighlight="@color/white"
+                android:textColorHint="@color/white"
+                android:textColorLink="@color/white" />
+        </android.support.design.widget.TextInputLayout>
+
+    </LinearLayout>
 
     <Button
-        android:clickable="true"
-        android:foreground="?android:attr/selectableItemBackground"
         android:id="@+id/login_btn"
-        android:layout_width="match_parent"
+        android:layout_width="162dp"
         android:layout_height="50dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="8dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
         android:background="@drawable/yellowbutton"
-        android:text="login"
-        android:textColor="@color/white"
-        android:textStyle="bold" />
+        android:gravity="center"
+        android:text="Login"
+        android:textColor="@color/black" />
+
+
+    <!--<ImageView
+       android:id="@+id/imageView2"
+       android:layout_width="150dp"
+       android:layout_height="150dp"
+       android:layout_marginStart="8dp"
+       android:layout_marginLeft="8dp"
+       android:layout_marginTop="8dp"
+       android:layout_marginEnd="8dp"
+       android:layout_marginRight="8dp"
+       android:layout_marginBottom="8dp"
+       android:src="@drawable/bio_logo"
+       app:layout_constraintBottom_toBottomOf="parent"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintHorizontal_bias="0.497"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintTop_toTopOf="parent"
+       app:layout_constraintVertical_bias="0.364" />
+
+
+   <TextView
+       android:layout_width="270dp"
+       android:layout_height="31dp"
+       android:layout_marginStart="8dp"
+       android:layout_marginLeft="8dp"
+       android:layout_marginTop="8dp"
+       android:layout_marginEnd="8dp"
+       android:layout_marginRight="8dp"
+       android:layout_marginBottom="8dp"
+       android:gravity="center"
+       android:text="BIOWAX"
+       android:textColor="@color/white"
+       android:textSize="25dp"
+       android:textStyle="bold"
+       app:layout_constraintBottom_toTopOf="@+id/editText"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+
+   <ImageView
+       android:layout_width="72dp"
+       android:layout_height="47dp"
+       android:layout_marginStart="8dp"
+       android:layout_marginLeft="8dp"
+       android:layout_marginTop="8dp"
+       android:layout_marginEnd="8dp"
+       android:layout_marginRight="8dp"
+       android:layout_marginBottom="8dp"
+       android:src="@drawable/car"
+       app:layout_constraintBottom_toBottomOf="parent"
+       app:layout_constraintEnd_toStartOf="@+id/editText"
+       app:layout_constraintHorizontal_bias="0.533"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintTop_toTopOf="parent"
+       app:layout_constraintVertical_bias="0.757"
+       tools:ignore="MissingConstraints" />
+
+   <EditText
+       android:id="@+id/editText"
+       android:layout_width="300dp"
+       android:layout_height="58dp"
+       android:layout_marginEnd="32dp"
+       android:layout_marginRight="32dp"
+       android:layout_marginBottom="168dp"
+       android:text="Vehicle NO"
+       android:textColor="@color/white"
+       android:textColorHint="@color/white"
+       android:textStyle="bold"
+       app:layout_constraintBottom_toBottomOf="parent"
+       app:layout_constraintEnd_toEndOf="parent" />
+
+   <Button
+       android:id="@+id/login_btn"
+       android:layout_width="162dp"
+       android:layout_height="60dp"
+       android:layout_marginStart="8dp"
+       android:layout_marginLeft="8dp"
+       android:layout_marginTop="8dp"
+       android:layout_marginEnd="8dp"
+       android:layout_marginRight="8dp"
+       android:layout_marginBottom="60dp"
+       android:background="@drawable/yellowbutton"
+       android:clickable="true"
+       android:foreground="?android:attr/selectableItemBackground"
+       android:text="login"
+       android:textColor="@color/black"
+       android:textStyle="bold"
+       app:layout_constraintBottom_toBottomOf="parent"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintHorizontal_bias="0.497"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintTop_toTopOf="parent"
+       app:layout_constraintVertical_bias="1.0"
+       tools:ignore="MissingConstraints" />-->
 
 </LinearLayout>

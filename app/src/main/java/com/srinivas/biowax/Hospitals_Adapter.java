@@ -33,12 +33,14 @@ public class Hospitals_Adapter extends RecyclerView.Adapter<Hospitals_Adapter.Ho
 
     @Override
     public void onBindViewHolder(@NonNull Hospitals_Adapter.Hospital hospital, int i) {
+        hospital.routename.setText(hospitals.get(i).getRoute_name());
         hospital.hospitalname_tv.setText(hospitals.get(i).getH_name());
-        hospital.hostpital_code_tv.setText(hospitals.get(i).getH_code());
+        hospital.contactno.setText(hospitals.get(i).getMobile());
+        hospital.location.setText(hospitals.get(i).getH_address());
         hospital.hostpital_ll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent biowaxform = new Intent(context,Biowastageform.class);
+                Intent biowaxform = new Intent(context, Biowastageform.class);
                 biowaxform.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(biowaxform);
             }
@@ -51,13 +53,15 @@ public class Hospitals_Adapter extends RecyclerView.Adapter<Hospitals_Adapter.Ho
     }
 
     public class Hospital extends RecyclerView.ViewHolder {
-        TextView hospitalname_tv, hostpital_code_tv;
+        TextView routename, hospitalname_tv, contactno,location;
         LinearLayout hostpital_ll;
 
         public Hospital(View itemView) {
             super(itemView);
+            routename = (TextView) itemView.findViewById(R.id.routename);
             hospitalname_tv = (TextView) itemView.findViewById(R.id.hospitalname_tv);
-            hostpital_code_tv = (TextView) itemView.findViewById(R.id.hostpital_code_tv);
+            contactno = (TextView) itemView.findViewById(R.id.contactno);
+            location = (TextView) itemView.findViewById(R.id.location);
             hostpital_ll = (LinearLayout) itemView.findViewById(R.id.hostpital_ll);
         }
     }

@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.srinivas.Driver.Driverdetails;
+
 public class Dashboard extends Activity implements View.OnClickListener {
     private StarAnimationView mAnimationView;
     LinearLayout garbage_ll, history_ll, mapview_ll, driverinfo_ll, receipt_ll, logout_ll;
@@ -60,6 +62,8 @@ public class Dashboard extends Activity implements View.OnClickListener {
             case R.id.mapview_ll:
                 break;
             case R.id.driverinfo_ll:
+                Intent driver = new Intent(Dashboard.this, Driverdetails.class);
+                startActivity(driver);
                 break;
             case R.id.receipt_ll:
                 break;

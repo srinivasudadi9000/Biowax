@@ -27,7 +27,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".History_View"></activity>
+        <activity android:name="com.srinivas.Driver.Driverdetails"></activity>
+        <activity android:name=".History_View" />
         <activity android:name=".Barcodescanner" />
         <activity android:name=".Biowastageform" />
         <activity android:name=".GarbageHistory" />

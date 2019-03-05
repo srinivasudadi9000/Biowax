@@ -20,6 +20,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -28,7 +31,8 @@ import okhttp3.RequestBody;
 
 public class Biowastageform extends Activity implements View.OnClickListener {
     ImageView scanning_qrcode, waste_image, myimage_back;
-    public static EditText waste_collection_date, barcodeNumber, cover_color_id;
+    public static EditText waste_collection_date, barcodeNumber, cover_color_id, Latitude, longitude, driver_id;
+    String hcf_master_id, truckid, route_master_id, routes_masters_driver_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,9 @@ public class Biowastageform extends Activity implements View.OnClickListener {
         myimage_back.setOnClickListener(this);
         barcodeNumber = findViewById(R.id.barcodeNumber);
         cover_color_id = findViewById(R.id.cover_color_id);
+        longitude = findViewById(R.id.longitude);
+        Latitude = findViewById(R.id.Latitude);
+        driver_id = findViewById(R.id.driver_id);
     }
 
     @Override
@@ -70,13 +77,19 @@ public class Biowastageform extends Activity implements View.OnClickListener {
     @Override
     protected void onRestart() {
         super.onRestart();
-       /* try {
-            getBarcodeDetails();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-        barcodeNumber.setText("BARCODE-87");
-        cover_color_id.setText("2");
+        Biowastageform.this.runOnUiThread(new Runnable() {
+            public void run() {
+                try {
+                    getBarcodeDetails();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
+       /* barcodeNumber.setText("BARCODE-87");
+        cover_color_id.setText("2");*/
         Toast.makeText(getBaseContext(), "Dadi Restart here ", Toast.LENGTH_SHORT).show();
     }
 
@@ -187,7 +200,7 @@ public class Biowastageform extends Activity implements View.OnClickListener {
 
     public void getBarcodeDetails() throws IOException {
 
-        SharedPreferences ss = getSharedPreferences("Login", MODE_PRIVATE);
+        final SharedPreferences ss = getSharedPreferences("Login", MODE_PRIVATE);
         // avoid creating several instances, should be singleon
         OkHttpClient client = new OkHttpClient();
 
@@ -220,15 +233,61 @@ public class Biowastageform extends Activity implements View.OnClickListener {
                     Log.d("result", response.toString());
                     String responseBody = response.body().string();
                     System.out.println("Dadi " + responseBody.toString());
-                    JSONObject obj;
+                    final JSONObject obj;
                     try {
                         obj = new JSONObject(responseBody);
                         if (obj.getString("status").equals("true")) {
-                            System.out.println("JONDDDd " + obj.toString());
-                            JSONObject result = obj.getJSONObject("barcode_data");
-                            barcodeNumber.setText(result.getString("barcode_number"));
-                            cover_color_id.setText(result.getString("cover_color_id"));
-                            // waste_collection_date.setText(obj.toString());
+                            Biowastageform.this.runOnUiThread(new Runnable() {
+                                public void run() {
+                                    System.out.println("JONDDDd " + obj.toString());
+                                    JSONObject result = null;
+                                    try {
+                                        result = obj.getJSONObject("barcode_data");
+                                        JSONObject hcf_master = result.getJSONObject("hcf_master");
+                                        barcodeNumber.setText(result.getString("barcode_number"));
+                                        driver_id.setText(result.getString("driver_id"));
+                                        cover_color_id.setText(result.getString("cover_color_id"));
+
+                                        hcf_master_id = result.getString("hcf_master_id");
+
+                                        JSONObject jsonObject = new JSONObject(ss.getString("data", "").toString());
+                                        System.out.println("DADi srinivasu " + jsonObject.toString());
+                                        JSONObject res = jsonObject.getJSONObject("user");
+
+                                        JSONObject truck = res.getJSONObject("routes_masters_driver");
+                                        truckid = truck.getString("truck_id");
+                                        routes_masters_driver_id = truck.getString("id");
+                                        if (result.getString("route_master_id") == null) {
+                                            Toast.makeText(getBaseContext(), "dadi route null ", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            route_master_id = result.getString("route_master_id");
+                                        }
+
+
+                                        Date c = Calendar.getInstance().getTime();
+                                        System.out.println("Current time => " + c);
+
+                                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                                        String formattedDate = df.format(c);
+                                        waste_collection_date.setText(formattedDate);
+                                        GPSTracker gpsTracker = new GPSTracker(Biowastageform.this);
+                                        if (gpsTracker.canGetLocation) {
+                                            System.out.println("loacotin update " + gpsTracker.getLatitude() + " longitude " + gpsTracker.getLongitude());
+                                            String x = String.valueOf(gpsTracker.getLatitude());
+                                            String xy = String.valueOf(gpsTracker.getLongitude());
+                                            Latitude.setText(x);
+                                            longitude.setText(xy);
+                                        }
+
+                                        //hcf_master.getString(" facility_name");
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                }
+                            });
+
+
                         } else {
                             System.out.println("else part JONDDDd " + obj.toString());
 

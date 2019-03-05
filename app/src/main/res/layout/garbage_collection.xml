@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/lisbg"
     android:orientation="vertical"
     tools:context=".GarbageCollection">
 
@@ -14,12 +15,20 @@
         android:layout_width="match_parent"
         android:layout_height="50dp">
 
+        <ImageView
+            android:id="@+id/myimage"
+            android:layout_width="50dp"
+            android:layout_height="45dp"
+            android:src="@drawable/back" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginRight="20dp"
             android:gravity="center"
-            android:text="Garbage Report"
+            android:text="Near by Hospitals"
+            android:textColor="@color/white"
             android:textSize="25dp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -100,13 +109,13 @@
                 </LinearLayout>
 
                 <ImageView
+                    android:id="@+id/search_img"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:clickable="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:padding="10dp"
-                    android:id="@+id/search_img"
                     android:src="@drawable/search" />
 
             </LinearLayout>
@@ -119,9 +128,11 @@
             android:gravity="center"
             android:text="Near by Hospitals"
             android:textSize="25dp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="gone" />
 
         <android.support.v7.widget.RecyclerView
+            android:layout_marginTop="25dp"
             android:id="@+id/hospitalb_rv"
             android:layout_width="match_parent"
             android:layout_height="match_parent">

@@ -15,6 +15,10 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.srinivas.Spin.LoadingSpin;
+import com.srinivas.validations.Validations;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,6 +33,7 @@ import okhttp3.RequestBody;
 public class Login extends Activity implements View.OnClickListener {
     Button login_btn;
     ProgressDialog pd;
+    LoadingSpin login;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +42,7 @@ public class Login extends Activity implements View.OnClickListener {
 
         login_btn = findViewById(R.id.login_btn);
         login_btn.setOnClickListener(this);
+        login = findViewById(R.id.spinn);
 
 
     }
@@ -50,11 +56,16 @@ public class Login extends Activity implements View.OnClickListener {
                 pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 pd.setIndeterminate(true);
                 pd.setCancelable(false);
-                pd.show();
-                try {
-                    Getlogin();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                // pd.show();
+                if (Validations.hasActiveInternetConnection(Login.this)) {
+                    login.setVisibility(View.VISIBLE);
+                    try {
+                        Getlogin();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(getBaseContext(), "Please check network connection", Toast.LENGTH_SHORT).show();
                 }
                /* Intent dashboard = new Intent(Login.this, Dashboard.class);
                 startActivity(dashboard);*/
@@ -116,9 +127,9 @@ public class Login extends Activity implements View.OnClickListener {
                                     }
                                 }
                             });*/
-                            SharedPreferences.Editor ss = getSharedPreferences("Login",MODE_PRIVATE).edit();
-                            ss.putString("access_token",obj.getString("access_token"));
-                            ss.putString("data",obj.toString());
+                            SharedPreferences.Editor ss = getSharedPreferences("Login", MODE_PRIVATE).edit();
+                            ss.putString("access_token", obj.getString("access_token"));
+                            ss.putString("data", obj.toString());
                             ss.commit();
                             Intent dashboard = new Intent(Login.this, Dashboard.class);
                             startActivity(dashboard);

@@ -26,16 +26,17 @@ import okhttp3.RequestBody;
 public class Home extends Activity {
 
     ViewPager viewPager;
-    int images[] = {R.drawable.image4, R.drawable.image2, R.drawable.image3, R.drawable.image4,R.drawable.image5,R.drawable.image6};
+    int images[] = {R.drawable.image1hd, R.drawable.image4hd, R.drawable.image2hd, R.drawable.image3hd, R.drawable.image6hd, R.drawable.image5hd};
     MyCustomPagerAdapter myCustomPagerAdapter;
     int currentPage = 0;
     TextView skip_tv;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home);
 
-        viewPager = (ViewPager)findViewById(R.id.my_viewpager);
+        viewPager = (ViewPager) findViewById(R.id.my_viewpager);
 
         myCustomPagerAdapter = new MyCustomPagerAdapter(Home.this, images);
         viewPager.setAdapter(myCustomPagerAdapter);
@@ -58,7 +59,7 @@ public class Home extends Activity {
         skip_tv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent subhome = new Intent(Home.this,Login.class);
+                Intent subhome = new Intent(Home.this, Login.class);
                 startActivity(subhome);
             }
         });
@@ -71,11 +72,7 @@ public class Home extends Activity {
         }, 2500, 2500);*/
 
 
-
     }
-
-
-
 
 
 }
