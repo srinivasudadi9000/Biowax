@@ -30,7 +30,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 public class Biowastageform extends Activity implements View.OnClickListener {
-    ImageView scanning_qrcode, waste_image, myimage_back;
+    ImageView scanning_qrcode, waste_image, myimage_back, done_img;
     public static EditText waste_collection_date, barcodeNumber, cover_color_id, Latitude, longitude, driver_id;
     String hcf_master_id, truckid, route_master_id, routes_masters_driver_id;
 
@@ -46,6 +46,8 @@ public class Biowastageform extends Activity implements View.OnClickListener {
         waste_collection_date = findViewById(R.id.waste_collection_date);
         myimage_back = findViewById(R.id.myimage_back);
         myimage_back.setOnClickListener(this);
+        done_img = findViewById(R.id.done_img);
+        done_img.setOnClickListener(this);
         barcodeNumber = findViewById(R.id.barcodeNumber);
         cover_color_id = findViewById(R.id.cover_color_id);
         longitude = findViewById(R.id.longitude);
@@ -70,6 +72,9 @@ public class Biowastageform extends Activity implements View.OnClickListener {
                 break;
             case R.id.myimage_back:
                 finish();
+                break;
+            case R.id.done_img:
+                Toast.makeText(getBaseContext(), "Successfully Record inserted", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
