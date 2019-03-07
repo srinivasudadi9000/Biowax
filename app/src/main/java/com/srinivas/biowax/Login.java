@@ -1,18 +1,27 @@
 package com.srinivas.biowax;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,11 +39,17 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
+import static android.content.ContentValues.TAG;
+
 public class Login extends Activity implements View.OnClickListener {
     Button login_btn;
     ProgressDialog pd;
     LoadingSpin login;
+    TelephonyManager manager;
+    String imenumber1 = null, imenumber2 = null;
+    EditText password_et;
 
+    @SuppressLint({"MissingPermission", "NewApi"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,30 +58,61 @@ public class Login extends Activity implements View.OnClickListener {
         login_btn = findViewById(R.id.login_btn);
         login_btn.setOnClickListener(this);
         login = findViewById(R.id.spinn);
+        password_et = findViewById(R.id.password_et);
 
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_PHONE_STATE}, 0);
+        } else {
+            TelephonyManager mTelephony = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+            imenumber1 = mTelephony.getDeviceId();
 
+            Toast.makeText(getBaseContext(),  imenumber1, Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Log.v(TAG, "Permission: " + permissions[0] + "was " + grantResults[0]);
+            //resume tasks needing this permission
+            TelephonyManager mTelephony = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+            imenumber1 = mTelephony.getDeviceId();
+            Toast.makeText(getBaseContext(),  imenumber1, Toast.LENGTH_SHORT).show();
+
+        }
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.login_btn:
-                pd = new ProgressDialog(this);
-                pd.setMessage("Authenticating Account..");
-                pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                pd.setIndeterminate(true);
-                pd.setCancelable(false);
-                // pd.show();
-                if (Validations.hasActiveInternetConnection(Login.this)) {
-                    login.setVisibility(View.VISIBLE);
-                    try {
-                        Getlogin();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                if (password_et.getText().length() == 0) {
+                    Toast.makeText(getBaseContext(), "Please enter password", Toast.LENGTH_SHORT).show();
+                } else if (password_et.getText().length() < 4) {
+                    Toast.makeText(getBaseContext(), "Please check password should be greater than 4 characters", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getBaseContext(), "Please check network connection", Toast.LENGTH_SHORT).show();
+                    pd = new ProgressDialog(this);
+                    pd.setMessage("Authenticating Account..");
+                    pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    pd.setIndeterminate(true);
+                    pd.setCancelable(false);
+                    // pd.show();
+                    if (Validations.hasActiveInternetConnection(Login.this)) {
+                        login.setVisibility(View.VISIBLE);
+                        try {
+                            Getlogin();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Toast.makeText(getBaseContext(), "Please check network connection", Toast.LENGTH_SHORT).show();
+                    }
                 }
+
                /* Intent dashboard = new Intent(Login.this, Dashboard.class);
                 startActivity(dashboard);*/
                 //    "message": "Unauthenticated."
@@ -82,8 +128,10 @@ public class Login extends Activity implements View.OnClickListener {
 
 
         RequestBody formBody = new FormBody.Builder()
-                .add("mobile_imei_number", "911637752174844")
-                .add("password", "demo@biowax.com")
+                //.add("mobile_imei_number", "911637752174844")
+                .add("mobile_imei_number", imenumber1.toString())
+               // .add("password", "demo@biowax.com")
+                .add("password", password_et.getText().toString())
                 /*.add("UserEmail", email_et.getText().toString())
                 .add("password", password_tv.getText().toString())*/
                 .build();
@@ -98,19 +146,32 @@ public class Login extends Activity implements View.OnClickListener {
         client.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(okhttp3.Call call, IOException e) {
-                Log.d("result", e.getMessage().toString());
+                login.setVisibility(View.GONE);
+                Log.d("result dadi", e.getMessage().toString());
                 e.printStackTrace();
-                pd.dismiss();
+                Toast.makeText(getBaseContext(), "IMEI Number or password doesnt exist", Toast.LENGTH_SHORT).show();
+                //pd.dismiss();
             }
 
             @Override
             public void onResponse(okhttp3.Call call, final okhttp3.Response response) throws IOException {
-                pd.dismiss();
+                // pd.dismiss();
                 if (!response.isSuccessful()) {
-                    Log.d("result", response.toString());
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            login.setVisibility(View.GONE);
+                            // Stuff that updates the UI
+                            Toast.makeText(getBaseContext(), "IMEI Number or password doesnt exist", Toast.LENGTH_SHORT).show();
+                            showDialog(Login.this, "Please Contact Admin IMEI Number: "+imenumber1+ " Thankyou", "true");
+                        }
+                    });
+
+                    Log.d("result dadi", response.toString());
                     throw new IOException("Unexpected code " + response);
                 } else {
-                    pd.dismiss();
+                    //  pd.dismiss();
                     Log.d("result", response.toString());
                     String responseBody = response.body().string();
                     final JSONObject obj;
@@ -147,6 +208,7 @@ public class Login extends Activity implements View.OnClickListener {
 
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        Toast.makeText(getBaseContext(), "IMEI Number or password doesnt exist", Toast.LENGTH_SHORT).show();
                     }
                 }
             }

@@ -50,13 +50,13 @@ public class Dashboard extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.garbage_ll:
-                Intent garbagecollection = new Intent(Dashboard.this,GarbageCollection.class);
+                Intent garbagecollection = new Intent(Dashboard.this, GarbageCollection.class);
                 startActivity(garbagecollection);
                 break;
             case R.id.history_ll:
-                Intent garbageHistory = new Intent(Dashboard.this,GarbageHistory.class);
+                Intent garbageHistory = new Intent(Dashboard.this, GarbageHistory.class);
                 startActivity(garbageHistory);
                 break;
             case R.id.mapview_ll:
@@ -66,6 +66,8 @@ public class Dashboard extends Activity implements View.OnClickListener {
                 startActivity(driver);
                 break;
             case R.id.receipt_ll:
+                Intent invoices = new Intent(Dashboard.this, GarbageInvoices.class);
+                startActivity(invoices);
                 break;
             case R.id.logout_ll:
                 break;

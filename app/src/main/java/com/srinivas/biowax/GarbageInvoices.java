@@ -1,15 +1,10 @@
 package com.srinivas.biowax;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,6 +13,8 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.srinivas.Models.Invoice;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,13 +26,11 @@ import java.util.ArrayList;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
-import static android.content.ContentValues.TAG;
-
-public class GarbageHistory extends Activity {
+public class GarbageInvoices extends Activity {
     RecyclerView hospitalb_rv;
 
-    ArrayList<Hospitalshistory> hospitalshistories;
-    Histroy_Adapter hospitals_adapter, hospitals_adapter2;
+    ArrayList<Invoice> invoices;
+    Invoices_Adapter invoicesadapter;
     Handler handler;
     private Runnable mRunnable;
     TextView latitude_tv, longitude_tv;
@@ -43,15 +38,15 @@ public class GarbageHistory extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.garbage_history);
+        setContentView(R.layout.garbage_invoices);
         hospitalb_rv = findViewById(R.id.hospitalb_rv);
         hospitalb_rv.setLayoutManager(new LinearLayoutManager(this));
         longitude_tv = findViewById(R.id.longitude_tv);
         latitude_tv = findViewById(R.id.latitude_tv);
 
-        hospitalshistories = new ArrayList<Hospitalshistory>();
-        hospitals_adapter = new Histroy_Adapter(hospitalshistories, R.layout.history_single, getApplicationContext());
-        hospitalb_rv.setAdapter(hospitals_adapter);
+        invoices = new ArrayList<Invoice>();
+        invoicesadapter = new Invoices_Adapter(invoices, R.layout.invoices_single, getApplicationContext());
+        hospitalb_rv.setAdapter(invoicesadapter);
         try {
             getRoutes();
         } catch (IOException e) {
@@ -71,7 +66,7 @@ public class GarbageHistory extends Activity {
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer" + ss.getString("access_token", ""))
-                .url("http://175.101.151.121:8001/api/hcfwastecollectiondataformobile")
+                .url("http://175.101.151.121:8001/api/getdueinvoicesformobile")
                 .get()
                 .build();
 
@@ -101,18 +96,15 @@ public class GarbageHistory extends Activity {
                             JSONArray jsonArray = obj.getJSONArray("data");
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject res = jsonArray.getJSONObject(i);
-                                hospitalshistories.add(new Hospitalshistory(res.getString("hcf_master_id"),
-                                        res.getString("waste_collection_date"),
-                                        res.getString("barcode_number"),
-                                        res.getString("transaction_code")
-                                        , res.getString("cover_color_id"),
-                                        res.getString("is_approval_required"),
-                                        res.getString("approved_by"),
-                                        res.getString("bag_weight_in_hcf"),
-                                        res.getString("is_manual_input"),
-                                        res.getString("hcf_authorized_person_name"),
-                                        res.getString("is_sagregation_completed"),
-                                        res.getString("sagregation_image")));
+                                invoices.add(new Invoice(res.getString("hcf_master_id"),
+                                        res.getString("invoice_date"),
+                                        res.getString("billing_month"),
+                                        res.getString("no_of_beds")
+                                        , res.getString("no_of_labs"),
+                                        res.getString("cost_per_lab"),
+                                        res.getString("lab_amount"),
+                                        res.getString("paid_amount"),
+                                        res.getString("total_invoice_amount")));
                             }
 
 
@@ -120,9 +112,9 @@ public class GarbageHistory extends Activity {
                             System.out.println("JONDDDd " + obj.toString());
                             System.out.println("JONDDDd " + obj.getString("token"));
 
-                            GarbageHistory.this.longitude_tv.post(new Runnable() {
+                            GarbageInvoices.this.longitude_tv.post(new Runnable() {
                                 public void run() {
-                                    showDialog(GarbageHistory.this, "Invalid Response..", "true");
+                                    showDialog(GarbageInvoices.this, "Invalid Response..", "true");
                                 }
                             });
                         }
@@ -133,8 +125,8 @@ public class GarbageHistory extends Activity {
                             public void run() {
 
                                 // Stuff that updates the UI
-                                hospitals_adapter = new Histroy_Adapter(hospitalshistories, R.layout.history_single, getApplicationContext());
-                                hospitalb_rv.setAdapter(hospitals_adapter);
+                                invoicesadapter = new Invoices_Adapter(invoices, R.layout.invoices_single, getApplicationContext());
+                                hospitalb_rv.setAdapter(invoicesadapter);
                             }
                         });
 

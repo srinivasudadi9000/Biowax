@@ -43,6 +43,7 @@
         <activity android:name=".Dashboard" />
         <activity android:name=".Home" />
         <activity android:name=".GarbageCollection" />
+        <activity android:name=".GarbageInvoices" />
     </application>
 
 </manifest>
