@@ -24,12 +24,12 @@
                 android:src="@drawable/bio_logo" />
 
             <TextView
-                android:textColor="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:foregroundGravity="center"
                 android:gravity="center"
                 android:text="BIOWAX"
+                android:textColor="@color/white"
                 android:textSize="30dp"
                 android:textStyle="bold" />
 

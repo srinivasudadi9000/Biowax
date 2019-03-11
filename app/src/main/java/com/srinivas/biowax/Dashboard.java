@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.srinivas.Driver.Agentdetails;
 import com.srinivas.Driver.Driverdetails;
 
 public class Dashboard extends Activity implements View.OnClickListener {
@@ -60,9 +61,12 @@ public class Dashboard extends Activity implements View.OnClickListener {
                 startActivity(garbageHistory);
                 break;
             case R.id.mapview_ll:
+                Intent locationhistory = new Intent(Dashboard.this, LocationHistory.class);
+                startActivity(locationhistory);
                 break;
             case R.id.driverinfo_ll:
-                Intent driver = new Intent(Dashboard.this, Driverdetails.class);
+               // Intent driver = new Intent(Dashboard.this, Driverdetails.class);
+                Intent driver = new Intent(Dashboard.this, Agentdetails.class);
                 startActivity(driver);
                 break;
             case R.id.receipt_ll:

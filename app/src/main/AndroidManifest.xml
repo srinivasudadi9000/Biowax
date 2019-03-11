@@ -28,6 +28,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity android:name="com.srinivas.Driver.Driverdetails"></activity>
+        <activity android:name="com.srinivas.Driver.Agentdetails"></activity>
         <activity android:name=".History_View" />
         <activity android:name=".Barcodescanner" />
         <activity android:name=".Biowastageform" />
@@ -39,6 +40,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".LocationHistory" />
         <activity android:name=".Login" />
         <activity android:name=".Dashboard" />
         <activity android:name=".Home" />
