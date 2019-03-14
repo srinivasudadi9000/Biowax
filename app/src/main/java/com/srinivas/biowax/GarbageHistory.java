@@ -3,8 +3,11 @@ package com.srinivas.biowax;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,7 +27,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -52,12 +57,12 @@ public class GarbageHistory extends Activity {
         hospitalshistories = new ArrayList<Hospitalshistory>();
         hospitals_adapter = new Histroy_Adapter(hospitalshistories, R.layout.history_single, getApplicationContext());
         hospitalb_rv.setAdapter(hospitals_adapter);
-        try {
+       /* try {
             getRoutes();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-
+        }*/
+        getcheckins_from_local();
     }
 
 
@@ -146,6 +151,54 @@ public class GarbageHistory extends Activity {
         });
 
     }
+
+    public void getcheckins_from_local() {
+
+        Calendar cd = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        String cdt_date = sdf.format(cd.getTime());
+
+        ////Log.d("displaycount", cdt_date.toString());
+        SQLiteDatabase db;
+        db = openOrCreateDatabase("RMAT", Context.MODE_PRIVATE, null);
+
+       // final Cursor c = db.rawQuery("SELECT * FROM dailyreportss ORDER BY cdt ASC LIMIT 1000", null);
+        final Cursor c = db.rawQuery("SELECT * FROM dailyreportss LIMIT 1000", null);
+        ////Log.d("overallstring", c.toString());
+        String ccc = String.valueOf(c.getCount());
+        // Toast.makeText(getBaseContext(),"installation "+ccc.toString(),Toast.LENGTH_SHORT).show();
+        ////Log.d("displaycount", ccc);
+        if (c.moveToFirst()) {
+            while (!c.isAfterLast()) {
+
+                hospitalshistories.add(new Hospitalshistory(
+                         c.getString(c.getColumnIndex("latitude")),c.getString(c.getColumnIndex("longitude")),
+                        c.getString(c.getColumnIndex("hcf_master_id")),c.getString(c.getColumnIndex("waste_collection_date")),
+                        c.getString(c.getColumnIndex("truck_id")),c.getString(c.getColumnIndex("route_master_id")),
+                        c.getString(c.getColumnIndex("barcode_number")),c.getString(c.getColumnIndex("cover_color_id")),
+                        c.getString(c.getColumnIndex("is_approval_required")),c.getString(c.getColumnIndex("approved_by"))
+                ,c.getString(c.getColumnIndex("bag_weight_in_hcf")),c.getString(c.getColumnIndex("is_manual_input"))));
+
+
+                 c.moveToNext();
+                      }
+        }
+        db.close();
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+
+                // Stuff that updates the UI
+                hospitals_adapter = new Histroy_Adapter(hospitalshistories, R.layout.history_single, getApplicationContext());
+                hospitalb_rv.setAdapter(hospitals_adapter);
+            }
+        });
+
+
+        //finish();
+    }
+
 
     public void showDialog(Activity activity, String msg, final String status) {
         final Dialog dialog = new Dialog(activity, R.style.PauseDialog);
