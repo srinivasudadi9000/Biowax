@@ -36,9 +36,9 @@ import okhttp3.Request;
 
 import static android.content.ContentValues.TAG;
 
-public class GarbageHistory extends Activity {
+public class GarbageHistory extends Activity implements View.OnClickListener {
     RecyclerView hospitalb_rv;
-
+    ImageView history_back;
     ArrayList<Hospitalshistory> hospitalshistories;
     Histroy_Adapter hospitals_adapter, hospitals_adapter2;
     Handler handler;
@@ -49,6 +49,8 @@ public class GarbageHistory extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.garbage_history);
+        history_back = findViewById(R.id.history_back);
+        history_back.setOnClickListener(this);
         hospitalb_rv = findViewById(R.id.hospitalb_rv);
         hospitalb_rv.setLayoutManager(new LinearLayoutManager(this));
         longitude_tv = findViewById(R.id.longitude_tv);
@@ -110,14 +112,14 @@ public class GarbageHistory extends Activity {
                                         res.getString("waste_collection_date"),
                                         res.getString("barcode_number"),
                                         res.getString("transaction_code")
-                                        , res.getString("cover_color_id"),
+                                        ,res.getString("cover_color_id"),
                                         res.getString("is_approval_required"),
                                         res.getString("approved_by"),
                                         res.getString("bag_weight_in_hcf"),
                                         res.getString("is_manual_input"),
                                         res.getString("hcf_authorized_person_name"),
                                         res.getString("is_sagregation_completed"),
-                                        res.getString("sagregation_image")));
+                                        res.getString("sagregation_image"), "",""));
                             }
 
 
@@ -162,7 +164,7 @@ public class GarbageHistory extends Activity {
         SQLiteDatabase db;
         db = openOrCreateDatabase("RMAT", Context.MODE_PRIVATE, null);
 
-       // final Cursor c = db.rawQuery("SELECT * FROM dailyreportss ORDER BY cdt ASC LIMIT 1000", null);
+        // final Cursor c = db.rawQuery("SELECT * FROM dailyreportss ORDER BY cdt ASC LIMIT 1000", null);
         final Cursor c = db.rawQuery("SELECT * FROM dailyreportss LIMIT 1000", null);
         ////Log.d("overallstring", c.toString());
         String ccc = String.valueOf(c.getCount());
@@ -170,25 +172,38 @@ public class GarbageHistory extends Activity {
         ////Log.d("displaycount", ccc);
         if (c.moveToFirst()) {
             while (!c.isAfterLast()) {
+                String weight = "";
+                String transno = c.getString(c.getColumnIndex("transno"));
+                SharedPreferences.Editor ss = getSharedPreferences("Tracno",MODE_PRIVATE).edit();
 
+                SharedPreferences tack = getSharedPreferences("Tracno",MODE_PRIVATE);
+                if (tack.getString("tracno","").equals("")) {
+                    ss.putString("tracno", transno);
+                    ss.commit();
+                    weight = c.getString(c.getColumnIndex("bag_weight_in_hcf"));
+                }
+                else {
+                    if (transno.equals(tack.getString("tracno",""))){
+                        weight = weight+" "+ c.getString(c.getColumnIndex("bag_weight_in_hcf"));
+                    }
+                }
                 hospitalshistories.add(new Hospitalshistory(
-                         c.getString(c.getColumnIndex("latitude")),c.getString(c.getColumnIndex("longitude")),
-                        c.getString(c.getColumnIndex("hcf_master_id")),c.getString(c.getColumnIndex("waste_collection_date")),
-                        c.getString(c.getColumnIndex("truck_id")),c.getString(c.getColumnIndex("route_master_id")),
-                        c.getString(c.getColumnIndex("barcode_number")),c.getString(c.getColumnIndex("cover_color_id")),
-                        c.getString(c.getColumnIndex("is_approval_required")),c.getString(c.getColumnIndex("approved_by"))
-                ,c.getString(c.getColumnIndex("bag_weight_in_hcf")),c.getString(c.getColumnIndex("is_manual_input"))));
+                        c.getString(c.getColumnIndex("hcf_master_id")), c.getString(c.getColumnIndex("waste_collection_date")),
+                        c.getString(c.getColumnIndex("barcode_number")), c.getString(c.getColumnIndex("longitude")),
+                        c.getString(c.getColumnIndex("truck_id")), c.getString(c.getColumnIndex("route_master_id")),
+                        c.getString(c.getColumnIndex("latitude")), c.getString(c.getColumnIndex("cover_color_id")),
+                        c.getString(c.getColumnIndex("is_approval_required")), c.getString(c.getColumnIndex("approved_by"))
+                        , c.getString(c.getColumnIndex("bag_weight_in_hcf")), c.getString(c.getColumnIndex("is_manual_input"))
+                        , c.getString(c.getColumnIndex("transno")),""));
 
 
-                 c.moveToNext();
-                      }
+                c.moveToNext();
+            }
         }
         db.close();
         runOnUiThread(new Runnable() {
-
             @Override
             public void run() {
-
                 // Stuff that updates the UI
                 hospitals_adapter = new Histroy_Adapter(hospitalshistories, R.layout.history_single, getApplicationContext());
                 hospitalb_rv.setAdapter(hospitals_adapter);
@@ -223,4 +238,12 @@ public class GarbageHistory extends Activity {
     }
 
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.history_back:
+                finish();
+                break;
+        }
+    }
 }

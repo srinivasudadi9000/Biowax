@@ -33,11 +33,11 @@ public class Histroy_Adapter extends RecyclerView.Adapter<Histroy_Adapter.Hospit
 
     @Override
     public void onBindViewHolder(@NonNull Histroy_Adapter.Hospital hospital, final int i) {
-        hospital.hcfc_master_id.setText(hospitals.get(i).getHcf_master_id());
+        hospital.hcfc_master_id.setText("HospitalId: "+hospitals.get(i).getHcf_master_id());
         hospital.waste_collection_date.setText(hospitals.get(i).getWaste_collection_date());
         hospital.barcodenumber.setText(hospitals.get(i).getBarcode_number());
-        hospital.cover_color_id.setText(hospitals.get(i).getCover_color_id());
-        hospital.bag_weight_in_hcf.setText(hospitals.get(i).getBag_weight_in_hcf());
+        hospital.cover_color_id.setText("CoverId: "+hospitals.get(i).getCover_color_id());
+        hospital.bag_weight_in_hcf.setText("TransactionId : "+hospitals.get(i).getTransactionid());
 
         hospital.hostpital_ll.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,7 +51,7 @@ public class Histroy_Adapter extends RecyclerView.Adapter<Histroy_Adapter.Hospit
                 biowaxform.putExtra("cover_color_id_tv",hospitals.get(i).getCover_color_id());
                 biowaxform.putExtra("is_approval_required_tv",hospitals.get(i).getIs_approval_required());
                 biowaxform.putExtra("approved_by_tv",hospitals.get(i).getApproved_by());
-                biowaxform.putExtra("bag_weight_in_hcf_tv",hospitals.get(i).getBag_weight_in_hcf());
+                biowaxform.putExtra("bag_weight_in_hcf_tv",hospitals.get(i).getTransactionid());
                 biowaxform.putExtra("is_manual_input_tv",hospitals.get(i).getIs_manual_input());
                 biowaxform.putExtra("hcf_authorized_person_name_tv",hospitals.get(i).getHcf_authorized_person_name());
                 biowaxform.putExtra("is_sagregation_completed_tv",hospitals.get(i).getIs_sagregation_completed());

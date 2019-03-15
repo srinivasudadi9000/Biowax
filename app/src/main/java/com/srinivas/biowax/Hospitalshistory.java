@@ -3,12 +3,13 @@ package com.srinivas.biowax;
 public class Hospitalshistory {
 
      String hcf_master_id,waste_collection_date,barcode_number,transaction_code,cover_color_id,is_approval_required,approved_by,
-             bag_weight_in_hcf,is_manual_input,hcf_authorized_person_name,is_sagregation_completed,sagregation_image;
+             bag_weight_in_hcf,is_manual_input,hcf_authorized_person_name,is_sagregation_completed,sagregation_image,transactionid,weight;
 
     public Hospitalshistory(String hcf_master_id, String waste_collection_date, String barcode_number, String transaction_code,
                             String cover_color_id, String is_approval_required, String approved_by, String bag_weight_in_hcf,
                             String is_manual_input,
-                            String hcf_authorized_person_name, String is_sagregation_completed, String sagregation_image) {
+                            String hcf_authorized_person_name, String is_sagregation_completed, String sagregation_image,
+    String transactionid,String weight) {
         this.hcf_master_id = hcf_master_id;
         this.waste_collection_date = waste_collection_date;
         this.barcode_number = barcode_number;
@@ -21,6 +22,24 @@ public class Hospitalshistory {
         this.hcf_authorized_person_name = hcf_authorized_person_name;
         this.is_sagregation_completed = is_sagregation_completed;
         this.sagregation_image = sagregation_image;
+        this.transactionid= transactionid;
+        this.weight = weight;
+    }
+
+    public String getWeight() {
+        return weight;
+    }
+
+    public void setWeight(String weight) {
+        this.weight = weight;
+    }
+
+    public String getTransactionid() {
+        return transactionid;
+    }
+
+    public void setTransactionid(String transactionid) {
+        this.transactionid = transactionid;
     }
 
     public String getHcf_master_id() {

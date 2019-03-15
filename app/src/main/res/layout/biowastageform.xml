@@ -51,7 +51,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
             <ImageView
                 android:id="@+id/scanning_qrcode"
                 android:layout_width="100dp"
@@ -59,6 +58,14 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="15dp"
                 android:src="@drawable/qrcode" />
+            <CheckBox
+                android:id="@+id/saveandcontinue"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_marginTop="20dp"
+                 android:text="Save and Continue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
 
             <android.support.design.widget.TextInputLayout
@@ -71,6 +78,7 @@
                 android:textColorHint="@color/black">
 
                 <EditText
+                    android:focusable="false"
                     android:id="@+id/waste_collection_date"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
@@ -96,6 +104,8 @@
                 app:boxBackgroundColor="@color/black">
 
                 <EditText
+                    android:focusable="false"
+
                     android:id="@+id/barcodeNumber"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
@@ -121,6 +131,8 @@
                 app:boxBackgroundColor="@color/black">
 
                 <EditText
+                    android:focusable="false"
+
                     android:id="@+id/cover_color_id"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
@@ -154,6 +166,7 @@
                     android:hint="Is Approval Yes/No "
                     android:inputType="text"
                     android:paddingLeft="10dp"
+                    android:text="Yes"
                     android:textColor="@color/black"
                     android:textColorHighlight="@color/black"
                     android:textColorHint="@color/black"
@@ -179,6 +192,7 @@
                     android:hint="Approved By"
                     android:inputType="text"
                     android:paddingLeft="10dp"
+                    android:text="Dadi "
                     android:textColor="@color/black"
                     android:textColorHighlight="@color/black"
                     android:textColorHint="@color/black"
@@ -204,6 +218,7 @@
                     android:hint="Bag Weight"
                     android:inputType="numberDecimal"
                     android:paddingLeft="10dp"
+                    android:text="45"
                     android:textColor="@color/black"
                     android:textColorHighlight="@color/black"
                     android:textColorHint="@color/black"
@@ -213,6 +228,7 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="25dp"
@@ -238,6 +254,7 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="25dp"
@@ -279,6 +296,7 @@
                     android:hint="Is Input Manual Yes / No"
                     android:inputType="text"
                     android:paddingLeft="10dp"
+                    android:text="Yes"
                     android:textColor="@color/black"
                     android:textColorHighlight="@color/black"
                     android:textColorHint="@color/black"
@@ -305,6 +323,7 @@
                     android:inputType="text"
                     android:paddingLeft="10dp"
                     android:textColor="@color/black"
+                    android:text="Dadi"
                     android:textColorHighlight="@color/black"
                     android:textColorHint="@color/black"
                     android:textColorLink="@color/black" />
@@ -317,6 +336,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="25dp"
                 android:layout_weight="1"
+                android:visibility="gone"
                 android:textColorHint="@color/black"
                 app:boxBackgroundColor="@color/black">
 
@@ -341,6 +361,7 @@
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="25dp"
+                android:visibility="gone"
                 android:layout_weight="1"
                 android:textColorHint="@color/black"
                 app:boxBackgroundColor="@color/black">
@@ -392,6 +413,7 @@
                     android:text="Yes" />
 
                 <RadioButton
+                    android:textIsSelectable="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

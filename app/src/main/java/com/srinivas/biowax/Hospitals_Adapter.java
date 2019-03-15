@@ -2,6 +2,7 @@ package com.srinivas.biowax;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,6 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class Hospitals_Adapter extends RecyclerView.Adapter<Hospitals_Adapter.Hospital> {
 
@@ -32,7 +35,7 @@ public class Hospitals_Adapter extends RecyclerView.Adapter<Hospitals_Adapter.Ho
     }
 
     @Override
-    public void onBindViewHolder(@NonNull Hospitals_Adapter.Hospital hospital, int i) {
+    public void onBindViewHolder(@NonNull final Hospitals_Adapter.Hospital hospital, final int i) {
         hospital.routename.setText(hospitals.get(i).getRoute_name());
         hospital.hospitalname_tv.setText(hospitals.get(i).getH_name());
         hospital.contactno.setText(hospitals.get(i).getMobile());
@@ -40,6 +43,20 @@ public class Hospitals_Adapter extends RecyclerView.Adapter<Hospitals_Adapter.Ho
         hospital.hostpital_ll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SharedPreferences.Editor trans = context.getSharedPreferences("Transaction",MODE_PRIVATE).edit();
+                trans.putString("trans", "");
+                trans.putString("hosid",hospitals.get(i).getH_code());
+                trans.commit();
+
+                SharedPreferences ss = context.getSharedPreferences("Transaction",MODE_PRIVATE);
+                if (ss.getString("hosid","").equals(hospitals.get(i).getH_code())){
+
+                }else {
+                    SharedPreferences.Editor transs = context.getSharedPreferences("Transaction",MODE_PRIVATE).edit();
+                    transs.putString("trans", "");
+                    transs.putString("hosid",hospitals.get(i).getH_code());
+                    trans.commit();
+                }
                 Intent biowaxform = new Intent(context, Biowastageform.class);
                 biowaxform.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(biowaxform);

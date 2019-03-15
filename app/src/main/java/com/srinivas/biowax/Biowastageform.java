@@ -25,6 +25,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -66,25 +67,42 @@ import retrofit2.http.Query;
 public class
 Biowastageform extends Activity implements View.OnClickListener {
     ImageView scanning_qrcode, waste_image, myimage_back, done_img;
-    public static EditText waste_collection_date, barcodeNumber, cover_color_id, Latitude, Longitude, driver_id;
+    public static EditText waste_collection_date;
+    public EditText barcodeNumber;
+    public EditText cover_color_id;
+    public EditText Latitude;
+    public EditText Longitude;
+    public EditText driver_id;
+    public EditText is_approval_required;
+    public EditText approved_by;
+    public EditText bag_weight_in_hcf;
+    public EditText is_manual_input;
+    public EditText hcf_authorized_person_name;
     String hcf_master_id, truckid, route_master_id, routes_masters_driver_id, clicked = "not", pic = "null";
     File otherImagefile2 = null;
     Uri iv_url2;
     int O_IMAGE2 = 2;
+    CheckBox saveandcontinue;
     GPSTracker gps;
     String latitude, logiitude;
     // private PeopleTrackerService service;
     ProgressDialog progress;
+    int aNumber = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.biowastageform);
-
+        saveandcontinue = findViewById(R.id.saveandcontinue);
         scanning_qrcode = findViewById(R.id.scanning_qrcode);
         scanning_qrcode.setOnClickListener(this);
         waste_image = findViewById(R.id.waste_image);
         waste_image.setOnClickListener(this);
+        is_manual_input = findViewById(R.id.is_manual_input);
+        hcf_authorized_person_name = findViewById(R.id.hcf_authorized_person_name);
+        approved_by = findViewById(R.id.approved_by);
+        bag_weight_in_hcf = findViewById(R.id.bag_weight_in_hcf);
+        is_approval_required = findViewById(R.id.is_approval_required);
         waste_collection_date = findViewById(R.id.waste_collection_date);
         myimage_back = findViewById(R.id.myimage_back);
         myimage_back.setOnClickListener(this);
@@ -304,7 +322,7 @@ Biowastageform extends Activity implements View.OnClickListener {
 */
     public void uploadWasteform() throws IOException {
 
-        SharedPreferences ss = getSharedPreferences("Login", MODE_PRIVATE);
+        final SharedPreferences ss = getSharedPreferences("Login", MODE_PRIVATE);
         // avoid creating several instances, should be singleon
         OkHttpClient client = new OkHttpClient();
 /*
@@ -332,34 +350,39 @@ Biowastageform extends Activity implements View.OnClickListener {
                 .addFormDataPart("is_sagregation_completed", "no")
                 .addFormDataPart("sagregation_image",  "")
                 .build();*/
+        Date c = Calendar.getInstance().getTime();
+        System.out.println("Current time => " + c);
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        final String formattedDate = df.format(c);
 
 
         RequestBody formBody = new FormBody.Builder()
-                .add("hcf_master_id", "5")
-                .add("waste_collection_date", "2018-01-29")
-                .add("truck_id", "1")
-                .add("route_master_id", "14")
-                .add("barcode_number", "BARCODE-1")
-                .add("cover_color_id", "1")
-                .add("is_approval_required", "Yes")
+                .add("hcf_master_id", hcf_master_id)
+                .add("waste_collection_date", formattedDate)
+                .add("truck_id", truckid)
+                .add("route_master_id", route_master_id)
+                .add("barcode_number", barcodeNumber.getText().toString())
+                .add("cover_color_id", cover_color_id.getText().toString())
+                .add("is_approval_required", is_approval_required.getText().toString())
                 .add("approved_by", "1")
-                .add("bag_weight_in_hcf", "100")
-                .add("longitude", "13.333")
-                .add("latitude", "83.333")
-                .add("is_manual_input", "No")
-                .add("hcf_authorized_person_name", "Suresh")
+                .add("bag_weight_in_hcf", bag_weight_in_hcf.getText().toString())
+                .add("longitude", latitude)
+                .add("latitude", logiitude)
+                .add("is_manual_input", is_manual_input.getText().toString())
+                .add("hcf_authorized_person_name", hcf_authorized_person_name.getText().toString())
                 .add("driver_id", "1")
                 .add("driver_imei_number", "123456789")
                 .add("is_sagregation_completed", "no")
                 .add("sagregation_image", "")
+
                 .build();
-
-        DBHelper dbHelper = new DBHelper(Biowastageform.this);
-        dbHelper.insertProject(latitude, logiitude, "dadi", "sadf", "asdf", "asdf", "asdf", "asdf",
-                "ksadlf", "asdf", "asdf", "asdf", "asdf", "asdf",
-                "asdf","asdf",Biowastageform.this);
-
-
+        System.out.println("Dadi hcf_master_id "+hcf_master_id+" waste_collection_date "+formattedDate+" truck_id "+truckid+
+                " routemaster_id "+route_master_id+" barcode no "+ barcodeNumber.getText().toString()+" Coverid "+cover_color_id.getText().toString()
+                + " isapproved required "+
+                is_approval_required.getText().toString()+" approvedby "+approved_by+" bagweight "+bag_weight_in_hcf.getText().toString()
+                +" latitude "+latitude+" longi "+logiitude
+        +" Ismanual "+is_manual_input.getText().toString()+" hcfauthorized "+hcf_authorized_person_name.getText().toString()+" driverid = 1");
         Request request = new Request.Builder()
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
@@ -367,6 +390,8 @@ Biowastageform extends Activity implements View.OnClickListener {
                 .url("http://175.101.151.121:8001/api/addhcfwastecollectionfrommobile")
                 .post(formBody)
                 .build();
+
+
 
         client.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
@@ -392,6 +417,32 @@ Biowastageform extends Activity implements View.OnClickListener {
                             System.out.println("JONDDDd " + obj.toString());
                             Biowastageform.this.scanning_qrcode.post(new Runnable() {
                                 public void run() {
+                                    aNumber = (int)((Math.random() * 9000000)+1000000);
+                                    SharedPreferences.Editor trans = getSharedPreferences("Transaction",MODE_PRIVATE).edit();
+                                    SharedPreferences ss = getSharedPreferences("Transaction",MODE_PRIVATE);
+                                        System.out.println("Hoooo "+ss.getString("trans",""));
+                                    if (saveandcontinue.isChecked()){
+
+                                        if (!ss.getString("trans","").equals("")){
+
+                                        }else {
+                                            trans.putString("trans", String.valueOf(aNumber));
+                                            trans.commit();
+                                        }
+                                    }else {
+                                        trans.putString("trans", String.valueOf(aNumber));
+                                        trans.commit();
+                                    }
+                                    DBHelper dbHelper = new DBHelper(Biowastageform.this);
+                                    dbHelper.insertProject(latitude, logiitude, hcf_master_id, formattedDate, truckid, route_master_id, barcodeNumber.getText().toString()
+                                            , cover_color_id.getText().toString(),
+                                            is_approval_required.getText().toString()
+                                            , approved_by.getText().toString(), bag_weight_in_hcf.getText().toString()
+                                            , is_manual_input.getText().toString(), hcf_authorized_person_name.getText().toString()
+                                            , driver_id.getText().toString(),
+                                            "asdf", "asdf",
+                                            ss.getString("trans",""),Biowastageform.this);
+
 
                                     showDialog(Biowastageform.this, "Sucessfully uploaded..", "true");
                                 }
@@ -490,7 +541,7 @@ Biowastageform extends Activity implements View.OnClickListener {
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer" + ss.getString("access_token", ""))
-                .url("http://175.101.151.121:8001/api/barcodedetails/barcode-" + 87)
+                .url("http://175.101.151.121:8001/api/barcodedetails/barcode-" + 1)
                 .get()
                 .build();
 
