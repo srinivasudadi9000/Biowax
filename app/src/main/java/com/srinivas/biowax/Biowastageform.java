@@ -64,8 +64,7 @@ import retrofit2.http.Multipart;
 import retrofit2.http.Part;
 import retrofit2.http.Query;
 
-public class
-Biowastageform extends Activity implements View.OnClickListener {
+public class Biowastageform extends Activity implements View.OnClickListener {
     ImageView scanning_qrcode, waste_image, myimage_back, done_img;
     public static EditText waste_collection_date;
     public EditText barcodeNumber;
@@ -78,7 +77,7 @@ Biowastageform extends Activity implements View.OnClickListener {
     public EditText bag_weight_in_hcf;
     public EditText is_manual_input;
     public EditText hcf_authorized_person_name;
-    String hcf_master_id, truckid, route_master_id, routes_masters_driver_id, clicked = "not", pic = "null";
+    String hcf_master_id, truckid, route_master_id, routes_masters_driver_id, clicked = "not", pic = "null",confirm="no";
     File otherImagefile2 = null;
     Uri iv_url2;
     int O_IMAGE2 = 2;
@@ -123,6 +122,8 @@ Biowastageform extends Activity implements View.OnClickListener {
             logiitude = String.valueOf(gps.getLongitude());
             // Toast.makeText(getBaseContext(),latitude+" "+longitude  ,Toast.LENGTH_SHORT).show();
         }
+        showcase2(getIntent().getStringExtra("hcfcode"));
+
 
     }
 
@@ -168,6 +169,9 @@ Biowastageform extends Activity implements View.OnClickListener {
     @Override
     protected void onRestart() {
         super.onRestart();
+        if(cover_color_id.getText().toString().length()==0){
+            showDialog(Biowastageform.this,"Sorry This Barcode Already Scanned","true");
+        }
         Biowastageform.this.runOnUiThread(new Runnable() {
             public void run() {
                 try {
@@ -837,7 +841,7 @@ Biowastageform extends Activity implements View.OnClickListener {
 
     }
 
-    public void showcase2(String msg) {
+    public void showcase2(String hcfcode) {
 
         final AlertDialog.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -845,18 +849,23 @@ Biowastageform extends Activity implements View.OnClickListener {
         } else {
             builder = new AlertDialog.Builder(Biowastageform.this);
         }
-        builder.setTitle("Alert")
-                .setMessage(msg)
+        builder.setTitle("Confirmation For Wastage")
+                .setMessage("Did you found wastage in this hospital"+hcfcode+ "If YES click on ")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // continue with delete
 
-                    }
+                     }
                 })
-
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                     }
+                })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
 
     }
+
 
 }

@@ -1,8 +1,11 @@
 package com.srinivas.biowax;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,7 +19,7 @@ import java.util.ArrayList;
 import static android.content.Context.MODE_PRIVATE;
 
 public class Hospitals_Adapter extends RecyclerView.Adapter<Hospitals_Adapter.Hospital> {
-
+    String confirm = "no";
     ArrayList<Hospitals> hospitals;
     int Rowlayout;
     Context context;
@@ -43,23 +46,25 @@ public class Hospitals_Adapter extends RecyclerView.Adapter<Hospitals_Adapter.Ho
         hospital.hostpital_ll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences.Editor trans = context.getSharedPreferences("Transaction",MODE_PRIVATE).edit();
+                SharedPreferences.Editor trans = context.getSharedPreferences("Transaction", MODE_PRIVATE).edit();
                 trans.putString("trans", "");
-                trans.putString("hosid",hospitals.get(i).getH_code());
+                trans.putString("hosid", hospitals.get(i).getH_code());
                 trans.commit();
 
-                SharedPreferences ss = context.getSharedPreferences("Transaction",MODE_PRIVATE);
-                if (ss.getString("hosid","").equals(hospitals.get(i).getH_code())){
+                SharedPreferences ss = context.getSharedPreferences("Transaction", MODE_PRIVATE);
+                if (ss.getString("hosid", "").equals(hospitals.get(i).getH_code())) {
 
-                }else {
-                    SharedPreferences.Editor transs = context.getSharedPreferences("Transaction",MODE_PRIVATE).edit();
+                } else {
+                    SharedPreferences.Editor transs = context.getSharedPreferences("Transaction", MODE_PRIVATE).edit();
                     transs.putString("trans", "");
-                    transs.putString("hosid",hospitals.get(i).getH_code());
+                    transs.putString("hosid", hospitals.get(i).getH_code());
                     trans.commit();
                 }
                 Intent biowaxform = new Intent(context, Biowastageform.class);
                 biowaxform.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                biowaxform.putExtra("hcfcode",hospitals.get(i).getH_code());
                 context.startActivity(biowaxform);
+
             }
         });
     }
@@ -70,7 +75,7 @@ public class Hospitals_Adapter extends RecyclerView.Adapter<Hospitals_Adapter.Ho
     }
 
     public class Hospital extends RecyclerView.ViewHolder {
-        TextView routename, hospitalname_tv, contactno,location;
+        TextView routename, hospitalname_tv, contactno, location;
         LinearLayout hostpital_ll;
 
         public Hospital(View itemView) {
@@ -82,4 +87,6 @@ public class Hospitals_Adapter extends RecyclerView.Adapter<Hospitals_Adapter.Ho
             hostpital_ll = (LinearLayout) itemView.findViewById(R.id.hostpital_ll);
         }
     }
+
+
 }
