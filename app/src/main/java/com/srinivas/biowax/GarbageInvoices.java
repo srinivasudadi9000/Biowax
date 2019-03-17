@@ -2,6 +2,7 @@ package com.srinivas.biowax;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.srinivas.Models.Invoice;
@@ -28,7 +30,7 @@ import okhttp3.Request;
 
 public class GarbageInvoices extends Activity {
     RecyclerView hospitalb_rv;
-
+    ProgressDialog pd;
     ArrayList<Invoice> invoices;
     Invoices_Adapter invoicesadapter;
     Handler handler;
@@ -47,6 +49,14 @@ public class GarbageInvoices extends Activity {
         invoices = new ArrayList<Invoice>();
         invoicesadapter = new Invoices_Adapter(invoices, R.layout.invoices_single, getApplicationContext());
         hospitalb_rv.setAdapter(invoicesadapter);
+
+        pd = new ProgressDialog(GarbageInvoices.this);
+        pd.setMessage("Fetching Invoices ..");
+        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pd.setIndeterminate(true);
+        pd.setCancelable(false);
+        pd.show();
+
         try {
             getRoutes();
         } catch (IOException e) {
@@ -76,15 +86,18 @@ public class GarbageInvoices extends Activity {
             public void onFailure(okhttp3.Call call, IOException e) {
                 Log.d("result", e.getMessage().toString());
                 e.printStackTrace();
+                pd.dismiss();
             }
 
             @Override
             public void onResponse(okhttp3.Call call, final okhttp3.Response response) throws IOException {
                 //  pd.dismiss();
                 if (!response.isSuccessful()) {
+                    pd.dismiss();
                     Log.d("result", response.toString());
                     throw new IOException("Unexpected code " + response);
                 } else {
+                    pd.dismiss();
                     Log.d("result", response.toString());
                     String responseBody = response.body().string();
                     final JSONObject obj;

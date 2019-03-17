@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.srinivas.Helper.DBHelper;
 import com.srinivas.Spin.LoadingSpin;
 import com.srinivas.validations.Validations;
 
@@ -67,9 +68,9 @@ public class Login extends Activity implements View.OnClickListener {
             TelephonyManager mTelephony = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
             imenumber1 = mTelephony.getDeviceId();
 
-            Toast.makeText(getBaseContext(),  imenumber1, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getBaseContext(), imenumber1, Toast.LENGTH_SHORT).show();
         }
-
+        DBHelper dbHelper = new DBHelper(Login.this);
     }
 
     @SuppressLint("MissingPermission")
@@ -81,7 +82,7 @@ public class Login extends Activity implements View.OnClickListener {
             //resume tasks needing this permission
             TelephonyManager mTelephony = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
             imenumber1 = mTelephony.getDeviceId();
-            Toast.makeText(getBaseContext(),  imenumber1, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getBaseContext(), imenumber1, Toast.LENGTH_SHORT).show();
 
         }
     }
@@ -128,7 +129,7 @@ public class Login extends Activity implements View.OnClickListener {
 
 
         RequestBody formBody = new FormBody.Builder()
-                .add("mobile_imei_number", "911637752174844")
+                 .add("mobile_imei_number", "911637752174844")
                 //.add("mobile_imei_number", imenumber1.toString())
                 .add("password", "demo@biowax.com")
                 //.add("password", password_et.getText().toString())
@@ -164,7 +165,7 @@ public class Login extends Activity implements View.OnClickListener {
                             login.setVisibility(View.GONE);
                             // Stuff that updates the UI
                             Toast.makeText(getBaseContext(), "IMEI Number or password doesnt exist", Toast.LENGTH_SHORT).show();
-                            showDialog(Login.this, "Please Contact Admin IMEI Number: "+imenumber1+ " Thankyou", "true");
+                            showDialog(Login.this, "Please Contact Admin IMEI Number: " + imenumber1 + " Thankyou", "true");
                         }
                     });
 
@@ -179,17 +180,16 @@ public class Login extends Activity implements View.OnClickListener {
                         obj = new JSONObject(responseBody);
                         if (obj.getString("status").equals("true")) {
                             System.out.println("JONDDDd " + obj.toString());
-                         /*   Login.this.login_btn.post(new Runnable() {
-                                public void run() {
-                                    try {
-                                        showDialog(Login.this, obj.getString("user").toString(), "true");
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            });*/
+                            JSONObject user = obj.getJSONObject("user");
+                            JSONObject routes_masters_driver = user.getJSONObject("routes_masters_driver");
+                            String driverid = routes_masters_driver.getString("id");
+
+                            String truck_id = routes_masters_driver.getString("truck_id");
+
                             SharedPreferences.Editor ss = getSharedPreferences("Login", MODE_PRIVATE).edit();
                             ss.putString("access_token", obj.getString("access_token"));
+                            ss.putString("driverid", driverid);
+                            ss.putString("truck_id", truck_id);
                             ss.putString("data", obj.toString());
                             ss.commit();
                             Intent dashboard = new Intent(Login.this, Dashboard.class);

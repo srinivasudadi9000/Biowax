@@ -32,15 +32,34 @@ public class History_View extends Activity implements View.OnClickListener {
 
 
         hcfc_master_id_tv.setText(getIntent().getStringExtra("hcfc_master_id_tv"));
+        hcfc_master_id_tv.setEnabled(false);
+
         waste_collection_date_tv.setText(getIntent().getStringExtra("waste_collection_date_tv"));
+        hcfc_master_id_tv.setEnabled(false);
+
         barcodeNumber_tv.setText(getIntent().getStringExtra("barcodeNumber_tv"));
+        hcfc_master_id_tv.setEnabled(false);
+
         transaction_code_tv.setText(getIntent().getStringExtra("transaction_code_tv"));
+        hcfc_master_id_tv.setEnabled(false);
+
         cover_color_id_tv.setText(getIntent().getStringExtra("cover_color_id_tv"));
+        hcfc_master_id_tv.setEnabled(false);
+
         is_approval_required_tv.setText(getIntent().getStringExtra("is_approval_required_tv"));
+        hcfc_master_id_tv.setEnabled(false);
+
         approved_by_tv.setText(getIntent().getStringExtra("approved_by_tv"));
+        hcfc_master_id_tv.setEnabled(false);
+
         is_manual_input_tv.setText(getIntent().getStringExtra("is_manual_input_tv"));
+        hcfc_master_id_tv.setEnabled(false);
+
         hcf_authorized_person_name_tv.setText(getIntent().getStringExtra("hcf_authorized_person_name_tv"));
+        hcfc_master_id_tv.setEnabled(false);
+
         is_sagregation_completed_tv.setText(getIntent().getStringExtra("is_sagregation_completed_tv"));
+        hcfc_master_id_tv.setEnabled(false);
     }
 
     @Override

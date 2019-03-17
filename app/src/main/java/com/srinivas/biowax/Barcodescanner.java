@@ -48,13 +48,12 @@ public class Barcodescanner extends AppCompatActivity implements ZBarScannerView
         Log.v("kkkk", result.getContents()); // Prints scan results
         Log.v("uuuu", result.getBarcodeFormat().getName()); // Prints the scan format (qrcode, pdf417 etc.)
 
-        Biowastageform.waste_collection_date.setText(result.getContents());
+        Biowastageform.barcodeNumber.setText(result.getContents());
         onBackPressed();
 
         // If you would like to resume scanning, call this method below:
         //mScannerView.resumeCameraPreview(this);
     }
-
 
 
 }

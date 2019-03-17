@@ -3,6 +3,7 @@ package com.srinivas.biowax;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -43,6 +44,7 @@ public class GarbageCollection extends Activity implements View.OnClickListener 
     private Runnable mRunnable;
     TextView latitude_tv, longitude_tv;
     ImageView myimage;
+    ProgressDialog pd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,12 @@ public class GarbageCollection extends Activity implements View.OnClickListener 
         hospitalb_rv.setLayoutManager(new LinearLayoutManager(this));
         longitude_tv = findViewById(R.id.longitude_tv);
         latitude_tv = findViewById(R.id.latitude_tv);
+        pd = new ProgressDialog(GarbageCollection.this);
+        pd.setMessage("Fetching Garbage History..");
+        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pd.setIndeterminate(true);
+        pd.setCancelable(false);
+        pd.show();
        /* try {
             getRoutes();
         } catch (IOException e) {
@@ -88,9 +96,10 @@ public class GarbageCollection extends Activity implements View.OnClickListener 
         handler = new Handler();
         handler.postDelayed(mRunnable = new Runnable() {
             public void run() {
+
                 checkins_filter.clear();
                 getlocationstatus();          // this method will contain your almost-finished HTTP calls
-                handler.postDelayed(this, 3000);
+                handler.postDelayed(this, 5000);
             }
         }, 3000);
 
@@ -111,6 +120,13 @@ public class GarbageCollection extends Activity implements View.OnClickListener 
             //resume tasks needing this permission
 
             try {
+                pd = new ProgressDialog(GarbageCollection.this);
+                pd.setMessage("Fetching Garbage History..");
+                pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                pd.setIndeterminate(true);
+                pd.setCancelable(false);
+                pd.show();
+
                 getRoutes();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -163,6 +179,7 @@ public class GarbageCollection extends Activity implements View.OnClickListener 
                 hospitals_adapter.notifyDataSetChanged();
             }
         }
+        pd.dismiss();
     }
 
     /**
@@ -208,15 +225,18 @@ public class GarbageCollection extends Activity implements View.OnClickListener 
             public void onFailure(okhttp3.Call call, IOException e) {
                 Log.d("result", e.getMessage().toString());
                 e.printStackTrace();
+                pd.dismiss();
             }
 
             @Override
             public void onResponse(okhttp3.Call call, final okhttp3.Response response) throws IOException {
                 //  pd.dismiss();
                 if (!response.isSuccessful()) {
+                    pd.dismiss();
                     Log.d("result", response.toString());
                     throw new IOException("Unexpected code " + response);
                 } else {
+                    pd.dismiss();
                     Log.d("result", response.toString());
                     String responseBody = response.body().string();
                     final JSONObject obj;
@@ -239,7 +259,6 @@ public class GarbageCollection extends Activity implements View.OnClickListener 
                                         hos.getString("contact_number")));
                             }
 
-
                         } else {
                             System.out.println("JONDDDd " + obj.toString());
                             System.out.println("JONDDDd " + obj.getString("token"));
@@ -260,6 +279,7 @@ public class GarbageCollection extends Activity implements View.OnClickListener 
         });
 
     }
+
 
     public void showDialog(Activity activity, String msg, final String status) {
         final Dialog dialog = new Dialog(activity, R.style.PauseDialog);

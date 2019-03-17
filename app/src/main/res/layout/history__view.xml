@@ -33,6 +33,11 @@
 
     </LinearLayout>
 
+    <ImageView
+        android:layout_gravity="center"
+        android:src="@drawable/printer"
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -62,6 +67,7 @@
                 android:textColorHint="@color/black">
 
                 <EditText
+                    android:editable="false"
                     android:id="@+id/hcfc_master_id_tv"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
@@ -87,6 +93,7 @@
                 app:boxBackgroundColor="@color/black">
 
                 <EditText
+                    android:editable="false"
                     android:id="@+id/waste_collection_date_tv"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
@@ -112,6 +119,7 @@
                 app:boxBackgroundColor="@color/black">
 
                 <EditText
+                    android:editable="false"
                     android:id="@+id/barcodeNumber_tv"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
@@ -137,6 +145,7 @@
                 app:boxBackgroundColor="@color/black">
 
                 <EditText
+                    android:editable="false"
                     android:id="@+id/transaction_code_tv"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"

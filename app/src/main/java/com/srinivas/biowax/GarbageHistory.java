@@ -3,6 +3,7 @@ package com.srinivas.biowax;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -22,6 +23,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.srinivas.Helper.DBHelper;
+import com.srinivas.validations.Validations;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,9 +34,12 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 
 import static android.content.ContentValues.TAG;
 
@@ -44,6 +51,7 @@ public class GarbageHistory extends Activity implements View.OnClickListener {
     Handler handler;
     private Runnable mRunnable;
     TextView latitude_tv, longitude_tv;
+    ProgressDialog pd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,12 +67,24 @@ public class GarbageHistory extends Activity implements View.OnClickListener {
         hospitalshistories = new ArrayList<Hospitalshistory>();
         hospitals_adapter = new Histroy_Adapter(hospitalshistories, R.layout.history_single, getApplicationContext());
         hospitalb_rv.setAdapter(hospitals_adapter);
-       /* try {
-            getRoutes();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-        getcheckins_from_local();
+
+        if (Validations.hasActiveInternetConnection(GarbageHistory.this)) {
+            try {
+                pd = new ProgressDialog(GarbageHistory.this);
+                pd.setMessage("Fetching Barcode Details..");
+                pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                pd.setIndeterminate(true);
+                pd.setCancelable(false);
+                pd.show();
+                getRoutes();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            getcheckins_from_local();
+        }
+
     }
 
 
@@ -88,15 +108,18 @@ public class GarbageHistory extends Activity implements View.OnClickListener {
             public void onFailure(okhttp3.Call call, IOException e) {
                 Log.d("result", e.getMessage().toString());
                 e.printStackTrace();
+                pd.dismiss();
             }
 
             @Override
             public void onResponse(okhttp3.Call call, final okhttp3.Response response) throws IOException {
                 //  pd.dismiss();
                 if (!response.isSuccessful()) {
+                    pd.dismiss();
                     Log.d("result", response.toString());
                     throw new IOException("Unexpected code " + response);
                 } else {
+                    pd.dismiss();
                     Log.d("result", response.toString());
                     String responseBody = response.body().string();
                     final JSONObject obj;
@@ -112,14 +135,14 @@ public class GarbageHistory extends Activity implements View.OnClickListener {
                                         res.getString("waste_collection_date"),
                                         res.getString("barcode_number"),
                                         res.getString("transaction_code")
-                                        ,res.getString("cover_color_id"),
+                                        , res.getString("cover_color_id"),
                                         res.getString("is_approval_required"),
                                         res.getString("approved_by"),
                                         res.getString("bag_weight_in_hcf"),
                                         res.getString("is_manual_input"),
                                         res.getString("hcf_authorized_person_name"),
                                         res.getString("is_sagregation_completed"),
-                                        res.getString("sagregation_image"), "",""));
+                                        res.getString("sagregation_image"), "", ""));
                             }
 
 
@@ -174,17 +197,34 @@ public class GarbageHistory extends Activity implements View.OnClickListener {
             while (!c.isAfterLast()) {
                 String weight = "";
                 String transno = c.getString(c.getColumnIndex("transno"));
-                SharedPreferences.Editor ss = getSharedPreferences("Tracno",MODE_PRIVATE).edit();
+                SharedPreferences.Editor ss = getSharedPreferences("Tracno", MODE_PRIVATE).edit();
 
-                SharedPreferences tack = getSharedPreferences("Tracno",MODE_PRIVATE);
-                if (tack.getString("tracno","").equals("")) {
+                SharedPreferences tack = getSharedPreferences("Tracno", MODE_PRIVATE);
+                if (tack.getString("tracno", "").equals("")) {
                     ss.putString("tracno", transno);
                     ss.commit();
                     weight = c.getString(c.getColumnIndex("bag_weight_in_hcf"));
+                } else {
+                    if (transno.equals(tack.getString("tracno", ""))) {
+                        weight = weight + " " + c.getString(c.getColumnIndex("bag_weight_in_hcf"));
+                    }
                 }
-                else {
-                    if (transno.equals(tack.getString("tracno",""))){
-                        weight = weight+" "+ c.getString(c.getColumnIndex("bag_weight_in_hcf"));
+                if (c.getString(c.getColumnIndex("status")).equals("local")) {
+
+                    try {
+                        uploadWasteform(c.getString(c.getColumnIndex("hcf_master_id")),
+                                c.getString(c.getColumnIndex("truck_id")),
+                                c.getString(c.getColumnIndex("route_master_id")),
+                                c.getString(c.getColumnIndex("barcode_number")),
+                                c.getString(c.getColumnIndex("cover_color_id")),
+                                c.getString(c.getColumnIndex("is_approval_required"))
+                                , c.getString(c.getColumnIndex("bag_weight_in_hcf")),
+                                c.getString(c.getColumnIndex("latitude")),
+                                c.getString(c.getColumnIndex("longitude")),
+                                c.getString(c.getColumnIndex("is_manual_input"))
+                                , c.getString(c.getColumnIndex("hcf_authorized_person_name")));
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
                 hospitalshistories.add(new Hospitalshistory(
@@ -194,13 +234,16 @@ public class GarbageHistory extends Activity implements View.OnClickListener {
                         c.getString(c.getColumnIndex("latitude")), c.getString(c.getColumnIndex("cover_color_id")),
                         c.getString(c.getColumnIndex("is_approval_required")), c.getString(c.getColumnIndex("approved_by"))
                         , c.getString(c.getColumnIndex("bag_weight_in_hcf")), c.getString(c.getColumnIndex("is_manual_input"))
-                        , c.getString(c.getColumnIndex("transno")),""));
+                        , c.getString(c.getColumnIndex("transno")), ""));
 
 
                 c.moveToNext();
             }
         }
         db.close();
+
+       /* hospitals_adapter = new Histroy_Adapter(hospitalshistories, R.layout.history_single, getApplicationContext());
+        hospitalb_rv.setAdapter(hospitals_adapter);*/
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -246,4 +289,88 @@ public class GarbageHistory extends Activity implements View.OnClickListener {
                 break;
         }
     }
+
+
+    public void uploadWasteform(String hcf_master_id, String truckid, String route_master_id, String barcodenumber,
+                                String cover_color_id, String is_approval_required, String bag_weight_in_hcf,
+                                String latitude, String logiitude, String is_manual_input, String hcf_authorized_person_name) throws IOException {
+
+        final SharedPreferences ss = getSharedPreferences("Login", MODE_PRIVATE);
+        // avoid creating several instances, should be singleon
+        OkHttpClient client = new OkHttpClient();
+        Date c = Calendar.getInstance().getTime();
+        System.out.println("Current time => " + c);
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        final String formattedDate = df.format(c);
+
+
+        RequestBody formBody = new FormBody.Builder()
+                .add("hcf_master_id", hcf_master_id)
+                .add("waste_collection_date", formattedDate)
+                .add("truck_id", truckid)
+                .add("route_master_id", route_master_id)
+                .add("barcode_number", barcodenumber)
+                .add("cover_color_id", cover_color_id)
+                .add("is_approval_required", is_approval_required)
+                .add("approved_by", "1")
+                .add("bag_weight_in_hcf", bag_weight_in_hcf)
+                .add("longitude", latitude)
+                .add("latitude", logiitude)
+                .add("is_manual_input", is_manual_input)
+                .add("hcf_authorized_person_name", hcf_authorized_person_name)
+                .add("driver_id", "1")
+                .add("driver_imei_number", "123456789")
+                .add("is_sagregation_completed", "no")
+                .add("sagregation_image", "")
+
+                .build();
+        Request request = new Request.Builder()
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer" + ss.getString("access_token", ""))
+                .url("http://175.101.151.121:8001/api/addhcfwastecollectionfrommobile")
+                .post(formBody)
+                .build();
+
+        if (Validations.hasActiveInternetConnection(GarbageHistory.this)) {
+            client.newCall(request).enqueue(new okhttp3.Callback() {
+                @Override
+                public void onFailure(okhttp3.Call call, IOException e) {
+                    Log.d("result", e.getMessage().toString());
+                    e.printStackTrace();
+                }
+
+                @Override
+                public void onResponse(okhttp3.Call call, final okhttp3.Response response) throws IOException {
+                    //  pd.dismiss();
+                    if (!response.isSuccessful()) {
+                        Log.d("result", response.toString());
+                        throw new IOException("Unexpected code " + response);
+                    } else {
+                        Log.d("result", response.toString());
+                        String responseBody = response.body().string();
+                        final JSONObject obj;
+                        try {
+                            obj = new JSONObject(responseBody);
+                            System.out.println("dadi out put here " + obj);
+                            if (obj.getString("status").equals("true")) {
+                                System.out.println("JONDDDd " + obj.toString());
+                            } else {
+
+                            }
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+
+        } else {
+        }
+
+    }
+
 }

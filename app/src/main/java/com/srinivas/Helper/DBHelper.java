@@ -18,7 +18,7 @@ public class DBHelper {
                 "truck_id VARCHAR," +
                 "route_master_id VARCHAR,barcode_number VARCHAR,cover_color_id VARCHAR,is_approval_required VARCHAR," +
                 "approved_by VARCHAR,bag_weight_in_hcf VARCHAR,is_manual_input VARCHAR,hcf_authorized_person_name VARCHAR," +
-                "driver_id VARCHAR,is_sagregation_completed VARCHAR,sagregation_image VARCHAR,transno VARCHAR);");
+                "driver_id VARCHAR,is_sagregation_completed VARCHAR,sagregation_image VARCHAR,transno VARCHAR,status VARCHAR);");
         //db.execSQL("CREATE TABLE IF NOT EXISTS questions(centers VARCHAR,params VARCHAR);");
         if (db.isOpen()) {
             db.close();
@@ -60,14 +60,14 @@ public class DBHelper {
     public void insertProject(String latitude,String longitude,String hcf_master_id ,String waste_collection_date ,
             String truck_id ,String route_master_id, String barcode_number,String cover_color_id,String is_approval_required ,
                               String approved_by ,String bag_weight_in_hcf ,String is_manual_input ,String hcf_authorized_person_name ,
-                              String driver_id ,String is_sagregation_completed ,String sagregation_image,String transno , Context context) {
+                              String driver_id ,String is_sagregation_completed ,String sagregation_image,String transno ,String status, Context context) {
         db = context.openOrCreateDatabase("RMAT", Context.MODE_PRIVATE, null);
         DBHelper.context = context;
         db.execSQL("INSERT INTO dailyreportss VALUES('" + latitude + "','" + longitude + "','" + hcf_master_id + "','" + waste_collection_date
                 + "','" + truck_id + "','" + route_master_id + "','" + barcode_number+ "','" + cover_color_id
                 + "','" + is_approval_required + "','"  + approved_by +  "','" + bag_weight_in_hcf  +
                  "','" + is_manual_input + "','" + hcf_authorized_person_name + "','" +driver_id + "','"
-                 + is_sagregation_completed + "','" + sagregation_image+ "','"+transno+"');");
+                 + is_sagregation_completed + "','" + sagregation_image+ "','"+transno+"','"+status+"');");
         if (db.isOpen()) {
             db.close();
         }

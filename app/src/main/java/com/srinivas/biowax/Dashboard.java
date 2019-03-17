@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.VibrationEffect;
@@ -20,7 +21,14 @@ import android.widget.Toast;
 import com.srinivas.Driver.Agentdetails;
 import com.srinivas.Driver.Driverdetails;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 import static android.content.ContentValues.TAG;
 
@@ -125,10 +133,80 @@ public class Dashboard extends Activity implements View.OnClickListener {
                 startActivity(invoices);
                 break;
             case R.id.logout_ll:
+                Intent splash = new Intent(Dashboard.this, Splash.class);
+                startActivity(splash);
+                finish();
                 vibrate();
                 break;
         }
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        try {
+            getBarcodes();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getBarcodes() throws IOException {
+
+        SharedPreferences ss = getSharedPreferences("Login", MODE_PRIVATE);
+        // avoid creating several instances, should be singleon
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer" + ss.getString("access_token", ""))
+                .url("http://175.101.151.121:8001/api/hcfdetailsformobile")
+                .get()
+                .build();
+
+
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, IOException e) {
+                Log.d("result", e.getMessage().toString());
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(okhttp3.Call call, final okhttp3.Response response) throws IOException {
+                //  pd.dismiss();
+                if (!response.isSuccessful()) {
+                    Log.d("result", response.toString());
+                    throw new IOException("Unexpected code " + response);
+                } else {
+                    Log.d("result", response.toString());
+                    String responseBody = response.body().string();
+                    final JSONObject obj;
+                    try {
+                        obj = new JSONObject(responseBody);
+                        if (obj.getString("status").equals("true")) {
+                            System.out.println("JONDDDd " + obj.toString());
+                            SharedPreferences.Editor barcodes = getSharedPreferences("Barcodes", MODE_PRIVATE).edit();
+                            barcodes.putString("barcodes", obj.toString());
+                            barcodes.commit();
+
+
+
+                        } else {
+                            System.out.println("JONDDDd " + obj.toString());
+                            System.out.println("JONDDDd " + obj.getString("token"));
+
+                         }
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+    }
 
 }

@@ -17,6 +17,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.JsonObject;
 import com.srinivas.Helper.DBHelper;
 
 import com.srinivas.Models.UploadInstall;
@@ -39,6 +41,7 @@ import com.srinivas.rest.ApiInterface;
 import com.srinivas.utils.Utils;
 import com.srinivas.validations.Validations;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -66,18 +69,19 @@ import retrofit2.http.Query;
 
 public class Biowastageform extends Activity implements View.OnClickListener {
     ImageView scanning_qrcode, waste_image, myimage_back, done_img;
-    public static EditText waste_collection_date;
-    public EditText barcodeNumber;
+    public EditText waste_collection_date;
+    public static EditText barcodeNumber;
     public EditText cover_color_id;
     public EditText Latitude;
     public EditText Longitude;
     public EditText driver_id;
     public EditText is_approval_required;
     public EditText approved_by;
+    ProgressDialog pd;
     public EditText bag_weight_in_hcf;
     public EditText is_manual_input;
     public EditText hcf_authorized_person_name;
-    String hcf_master_id, truckid, route_master_id, routes_masters_driver_id, clicked = "not", pic = "null",confirm="no";
+    String hcf_master_id, truckid, route_master_id, routes_masters_driver_id, clicked = "not", pic = "null", confirm = "no";
     File otherImagefile2 = null;
     Uri iv_url2;
     int O_IMAGE2 = 2;
@@ -122,7 +126,7 @@ public class Biowastageform extends Activity implements View.OnClickListener {
             logiitude = String.valueOf(gps.getLongitude());
             // Toast.makeText(getBaseContext(),latitude+" "+longitude  ,Toast.LENGTH_SHORT).show();
         }
-        showcase2(getIntent().getStringExtra("hcfcode"));
+        showcase2("Confirmation For Wastage", "Did you found wastage " + " \n If YES click on OK");
 
 
     }
@@ -131,8 +135,70 @@ public class Biowastageform extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.scanning_qrcode:
-                Intent barcodescanner = new Intent(Biowastageform.this, Barcodescanner.class);
-                startActivity(barcodescanner);
+                if (Validations.hasActiveInternetConnection(Biowastageform.this)) {
+                    Intent barcodescanner = new Intent(Biowastageform.this, Barcodescanner.class);
+                    startActivity(barcodescanner);
+                } else {
+                    barcodeNumber.setText("");
+                    barcodeNumber.getText().toString();
+
+                    SharedPreferences barcodes = getSharedPreferences("Barcodes", MODE_PRIVATE);
+
+                    String responseBody = barcodes.getString("barcodes", "");
+
+                    System.out.println("DAd do it " + responseBody);
+                    try {
+                        SharedPreferences sstruck = getSharedPreferences("Login", MODE_PRIVATE);
+
+                        truckid = sstruck.getString("truck_id", "");
+                        JSONObject obj = new JSONObject(responseBody);
+                        JSONArray jsonArray = obj.getJSONArray("data");
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject res = jsonArray.getJSONObject(i);
+                            JSONObject routes_master = res.getJSONObject("routes_master");
+                            route_master_id = routes_master.getString("id");
+                            JSONObject hos = res.getJSONObject("hcf_master");
+                            hcf_master_id = hos.getString("id");
+                            JSONArray wow = hos.getJSONArray("hcf_waste_barcodes_not_scanned");
+
+
+                            System.out.println("wowow " + wow.toString());
+                            Boolean allow = false;
+                            for (int j = 0; j < wow.length(); j++) {
+
+                                String sfd = wow.getString(j);
+                                System.out.println("barcode_number  " + sfd);
+                                JSONObject js = wow.getJSONObject(j);
+                                if (js.getString("barcode_number").equals(barcodeNumber.getText().toString())) {
+                                    barcodeNumber.setText(js.getString("barcode_number"));
+                                    SharedPreferences ss = getSharedPreferences("Login", MODE_PRIVATE);
+
+                                    driver_id.setText(ss.getString("driverid", ""));
+                                    cover_color_id.setText(js.getString("cover_color_id"));
+
+                                }
+
+
+                            }
+
+                        }
+                        if (cover_color_id.getText().length() == 0) {
+                            showcase2("Barcode Alert", "Barcode Already Scanned");
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                   /* barcodeNumber.setText(result.getString("barcode_number"));
+                    driver_id.setText(result.getString("driver_id"));
+                    cover_color_id.setText(result.getString("cover_color_id"));
+
+                    hcf_master_id = result.getString("hcf_master_id");
+                    route_master_id = result.getString("route_master_id");*/
+
+                }
+
                 break;
 
             case R.id.waste_image:
@@ -169,19 +235,38 @@ public class Biowastageform extends Activity implements View.OnClickListener {
     @Override
     protected void onRestart() {
         super.onRestart();
-        if(cover_color_id.getText().toString().length()==0){
-            showDialog(Biowastageform.this,"Sorry This Barcode Already Scanned","true");
-        }
+
         Biowastageform.this.runOnUiThread(new Runnable() {
             public void run() {
-                try {
-                    getBarcodeDetails();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if (barcodeNumber.getText().toString().length() == 0) {
+                    showcase2("Form Validation ", "Scan Barcode with valid data");
+                } else {
+                    try {
+                        pd = new ProgressDialog(Biowastageform.this);
+                        pd.setMessage("Fetching Barcode Details..");
+                        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                        pd.setIndeterminate(true);
+                        pd.setCancelable(false);
+                        pd.show();
+                        getBarcodeDetails(barcodeNumber.getText().toString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
+
             }
         });
 
+/*
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (cover_color_id.getText().toString().length() == 0) {
+                    showDialog(Biowastageform.this, "Sorry This Barcode Already Scanned", "true");
+                }
+            }
+        }, 1000);
+*/
 
        /* barcodeNumber.setText("BARCODE-87");
         cover_color_id.setText("2");*/
@@ -189,10 +274,16 @@ public class Biowastageform extends Activity implements View.OnClickListener {
     }
 
     public void done() {
-        try {
-            uploadWasteform();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (cover_color_id.getText().toString().length() == 0) {
+            showcase2("Form Alert", "Barcode not found in Database");
+        } else {
+
+            try {
+                uploadWasteform();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
 /*        if (clicked.equals("not")) {
             String root = Environment.getExternalStorageDirectory().toString();
@@ -381,12 +472,12 @@ public class Biowastageform extends Activity implements View.OnClickListener {
                 .add("sagregation_image", "")
 
                 .build();
-        System.out.println("Dadi hcf_master_id "+hcf_master_id+" waste_collection_date "+formattedDate+" truck_id "+truckid+
-                " routemaster_id "+route_master_id+" barcode no "+ barcodeNumber.getText().toString()+" Coverid "+cover_color_id.getText().toString()
-                + " isapproved required "+
-                is_approval_required.getText().toString()+" approvedby "+approved_by+" bagweight "+bag_weight_in_hcf.getText().toString()
-                +" latitude "+latitude+" longi "+logiitude
-        +" Ismanual "+is_manual_input.getText().toString()+" hcfauthorized "+hcf_authorized_person_name.getText().toString()+" driverid = 1");
+        System.out.println("Dadi hcf_master_id " + hcf_master_id + " waste_collection_date " + formattedDate + " truck_id " + truckid +
+                " routemaster_id " + route_master_id + " barcode no " + barcodeNumber.getText().toString() + " Coverid " + cover_color_id.getText().toString()
+                + " isapproved required " +
+                is_approval_required.getText().toString() + " approvedby " + approved_by + " bagweight " + bag_weight_in_hcf.getText().toString()
+                + " latitude " + latitude + " longi " + logiitude
+                + " Ismanual " + is_manual_input.getText().toString() + " hcfauthorized " + hcf_authorized_person_name.getText().toString() + " driverid = 1");
         Request request = new Request.Builder()
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
@@ -395,80 +486,103 @@ public class Biowastageform extends Activity implements View.OnClickListener {
                 .post(formBody)
                 .build();
 
+        if (Validations.hasActiveInternetConnection(Biowastageform.this)) {
+            client.newCall(request).enqueue(new okhttp3.Callback() {
+                @Override
+                public void onFailure(okhttp3.Call call, IOException e) {
+                    Log.d("result", e.getMessage().toString());
+                    e.printStackTrace();
+                }
 
+                @Override
+                public void onResponse(okhttp3.Call call, final okhttp3.Response response) throws IOException {
+                    //  pd.dismiss();
+                    if (!response.isSuccessful()) {
+                        Log.d("result", response.toString());
+                        throw new IOException("Unexpected code " + response);
+                    } else {
+                        Log.d("result", response.toString());
+                        String responseBody = response.body().string();
+                        final JSONObject obj;
+                        try {
+                            obj = new JSONObject(responseBody);
+                            System.out.println("dadi out put here " + obj);
+                            if (obj.getString("status").equals("true")) {
+                                System.out.println("JONDDDd " + obj.toString());
+                                Biowastageform.this.scanning_qrcode.post(new Runnable() {
+                                    public void run() {
+                                        aNumber = (int) ((Math.random() * 9000000) + 1000000);
+                                        SharedPreferences.Editor trans = getSharedPreferences("Transaction", MODE_PRIVATE).edit();
+                                        SharedPreferences ss = getSharedPreferences("Transaction", MODE_PRIVATE);
+                                        System.out.println("Hoooo " + ss.getString("trans", ""));
+                                        if (saveandcontinue.isChecked()) {
 
-        client.newCall(request).enqueue(new okhttp3.Callback() {
-            @Override
-            public void onFailure(okhttp3.Call call, IOException e) {
-                Log.d("result", e.getMessage().toString());
-                e.printStackTrace();
-            }
+                                            if (!ss.getString("trans", "").equals("")) {
 
-            @Override
-            public void onResponse(okhttp3.Call call, final okhttp3.Response response) throws IOException {
-                //  pd.dismiss();
-                if (!response.isSuccessful()) {
-                    Log.d("result", response.toString());
-                    throw new IOException("Unexpected code " + response);
-                } else {
-                    Log.d("result", response.toString());
-                    String responseBody = response.body().string();
-                    final JSONObject obj;
-                    try {
-                        obj = new JSONObject(responseBody);
-                        System.out.println("dadi out put here " + obj);
-                        if (obj.getString("status").equals("true")) {
-                            System.out.println("JONDDDd " + obj.toString());
-                            Biowastageform.this.scanning_qrcode.post(new Runnable() {
-                                public void run() {
-                                    aNumber = (int)((Math.random() * 9000000)+1000000);
-                                    SharedPreferences.Editor trans = getSharedPreferences("Transaction",MODE_PRIVATE).edit();
-                                    SharedPreferences ss = getSharedPreferences("Transaction",MODE_PRIVATE);
-                                        System.out.println("Hoooo "+ss.getString("trans",""));
-                                    if (saveandcontinue.isChecked()){
-
-                                        if (!ss.getString("trans","").equals("")){
-
-                                        }else {
+                                            } else {
+                                                trans.putString("trans", String.valueOf(aNumber));
+                                                trans.commit();
+                                            }
+                                        } else {
                                             trans.putString("trans", String.valueOf(aNumber));
                                             trans.commit();
                                         }
-                                    }else {
-                                        trans.putString("trans", String.valueOf(aNumber));
-                                        trans.commit();
+                                        DBHelper dbHelper = new DBHelper(Biowastageform.this);
+                                        dbHelper.insertProject(latitude, logiitude, hcf_master_id, formattedDate, truckid, route_master_id, barcodeNumber.getText().toString()
+                                                , cover_color_id.getText().toString(),
+                                                is_approval_required.getText().toString()
+                                                , approved_by.getText().toString(), bag_weight_in_hcf.getText().toString()
+                                                , is_manual_input.getText().toString(), hcf_authorized_person_name.getText().toString()
+                                                , driver_id.getText().toString(),
+                                                "asdf", "asdf",
+                                                ss.getString("trans", ""), "online", Biowastageform.this);
+
+
+                                        showDialog(Biowastageform.this, "Sucessfully uploaded..", "true");
                                     }
-                                    DBHelper dbHelper = new DBHelper(Biowastageform.this);
-                                    dbHelper.insertProject(latitude, logiitude, hcf_master_id, formattedDate, truckid, route_master_id, barcodeNumber.getText().toString()
-                                            , cover_color_id.getText().toString(),
-                                            is_approval_required.getText().toString()
-                                            , approved_by.getText().toString(), bag_weight_in_hcf.getText().toString()
-                                            , is_manual_input.getText().toString(), hcf_authorized_person_name.getText().toString()
-                                            , driver_id.getText().toString(),
-                                            "asdf", "asdf",
-                                            ss.getString("trans",""),Biowastageform.this);
+                                });
+                            } else {
+                                DBHelper dbHelper = new DBHelper(Biowastageform.this);
+                                dbHelper.insertProject(latitude, logiitude, hcf_master_id, formattedDate, truckid, route_master_id, barcodeNumber.getText().toString()
+                                        , cover_color_id.getText().toString(),
+                                        is_approval_required.getText().toString()
+                                        , approved_by.getText().toString(), bag_weight_in_hcf.getText().toString()
+                                        , is_manual_input.getText().toString(), hcf_authorized_person_name.getText().toString()
+                                        , driver_id.getText().toString(),
+                                        "asdf", "asdf",
+                                        ss.getString("trans", ""), "local", Biowastageform.this);
 
 
-                                    showDialog(Biowastageform.this, "Sucessfully uploaded..", "true");
-                                }
-                            });
-                        } else {
-                            System.out.println("JONDDDd " + obj.toString());
-                            System.out.println("JONDDDd " + obj.getString("token"));
+                                System.out.println("JONDDDd " + obj.toString());
+                                System.out.println("JONDDDd " + obj.getString("token"));
 
-                            Biowastageform.this.scanning_qrcode.post(new Runnable() {
-                                public void run() {
-                                    showDialog(Biowastageform.this, "Sorry please try again..", "true");
-                                }
-                            });
+                                Biowastageform.this.scanning_qrcode.post(new Runnable() {
+                                    public void run() {
+                                        showDialog(Biowastageform.this, "Sorry please try again..", "true");
+                                    }
+                                });
+                            }
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
                 }
-            }
-        });
+            });
+
+        } else {
+            DBHelper dbHelper = new DBHelper(Biowastageform.this);
+            dbHelper.insertProject(latitude, logiitude, hcf_master_id, formattedDate, truckid, route_master_id, barcodeNumber.getText().toString()
+                    , cover_color_id.getText().toString(),
+                    is_approval_required.getText().toString()
+                    , approved_by.getText().toString(), bag_weight_in_hcf.getText().toString()
+                    , is_manual_input.getText().toString(), hcf_authorized_person_name.getText().toString()
+                    , driver_id.getText().toString(),
+                    "asdf", "asdf",
+                    ss.getString("trans", ""), "local", Biowastageform.this);
+            showcase2("Form Alert", "Record saved in local Database sucessfully Thankyou !!");
+        }
 
     }
 
@@ -532,7 +646,7 @@ public class Biowastageform extends Activity implements View.OnClickListener {
     }
 
 
-    public void getBarcodeDetails() throws IOException {
+    public void getBarcodeDetails(String barcodeno) throws IOException {
 
         final SharedPreferences ss = getSharedPreferences("Login", MODE_PRIVATE);
         // avoid creating several instances, should be singleon
@@ -545,7 +659,7 @@ public class Biowastageform extends Activity implements View.OnClickListener {
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer" + ss.getString("access_token", ""))
-                .url("http://175.101.151.121:8001/api/barcodedetails/barcode-" + 1)
+                .url("http://175.101.151.121:8001/api/barcodedetails/" + barcodeno)
                 .get()
                 .build();
 
@@ -555,15 +669,18 @@ public class Biowastageform extends Activity implements View.OnClickListener {
             public void onFailure(okhttp3.Call call, IOException e) {
                 Log.d("result", e.getMessage().toString());
                 e.printStackTrace();
+                pd.dismiss();
             }
 
             @Override
             public void onResponse(okhttp3.Call call, final okhttp3.Response response) throws IOException {
                 //  pd.dismiss();
                 if (!response.isSuccessful()) {
+                    pd.dismiss();
                     Log.d("result", response.toString());
                     throw new IOException("Unexpected code " + response);
                 } else {
+                    pd.dismiss();
                     Log.d("result", response.toString());
                     String responseBody = response.body().string();
                     System.out.println("Dadi " + responseBody.toString());
@@ -578,18 +695,22 @@ public class Biowastageform extends Activity implements View.OnClickListener {
                                     try {
                                         result = obj.getJSONObject("barcode_data");
                                         JSONObject hcf_master = result.getJSONObject("hcf_master");
-                                        barcodeNumber.setText(result.getString("barcode_number"));
-                                        driver_id.setText(result.getString("driver_id"));
-                                        cover_color_id.setText(result.getString("cover_color_id"));
+                                        SharedPreferences ss = getSharedPreferences("Login", MODE_PRIVATE);
+
+                                        truckid = ss.getString("truck_id", "");
+
+                                        driver_id.setText(ss.getString("driverid", ""));
+
 
                                         hcf_master_id = result.getString("hcf_master_id");
+                                        barcodeNumber.setText(result.getString("barcode_number"));
+                                        cover_color_id.setText(result.getString("cover_color_id"));
 
                                         JSONObject jsonObject = new JSONObject(ss.getString("data", "").toString());
                                         System.out.println("DADi srinivasu " + jsonObject.toString());
                                         JSONObject res = jsonObject.getJSONObject("user");
 
                                         JSONObject truck = res.getJSONObject("routes_masters_driver");
-                                        truckid = truck.getString("truck_id");
                                         routes_masters_driver_id = truck.getString("id");
                                         if (result.getString("route_master_id") == null) {
                                             Toast.makeText(getBaseContext(), "dadi route null ", Toast.LENGTH_SHORT).show();
@@ -623,6 +744,13 @@ public class Biowastageform extends Activity implements View.OnClickListener {
 
 
                         } else {
+                            Biowastageform.this.runOnUiThread(new Runnable() {
+                                public void run() {
+                                    showcase2("Barcode Alert", "Already Scanned Barcode");
+                                }
+                            });
+
+
                             System.out.println("else part JONDDDd " + obj.toString());
 
                         }
@@ -841,7 +969,7 @@ public class Biowastageform extends Activity implements View.OnClickListener {
 
     }
 
-    public void showcase2(String hcfcode) {
+    public void showcase2(String title, String msg) {
 
         final AlertDialog.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -849,21 +977,131 @@ public class Biowastageform extends Activity implements View.OnClickListener {
         } else {
             builder = new AlertDialog.Builder(Biowastageform.this);
         }
-        builder.setTitle("Confirmation For Wastage")
-                .setMessage("Did you found wastage in this hospital"+hcfcode+ "If YES click on ")
+        builder.setTitle(title)
+                .setMessage(msg)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // continue with delete
 
-                     }
+                    }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // continue with delete
-                     }
+                        builder.setCancelable(true);
+                        finish();
+                    }
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
+
+    }
+
+
+    public void addhcfvisitlog() throws IOException {
+
+        final SharedPreferences ss = getSharedPreferences("Login", MODE_PRIVATE);
+        // avoid creating several instances, should be singleon
+        OkHttpClient client = new OkHttpClient();
+
+        RequestBody formBody = new FormBody.Builder()
+                .build();
+
+        Request request = new Request.Builder()
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer" + ss.getString("access_token", ""))
+                .url("http://175.101.151.121:8001/api/addhcfvisitlog")
+                .get()
+                .build();
+
+
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, IOException e) {
+                Log.d("result", e.getMessage().toString());
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(okhttp3.Call call, final okhttp3.Response response) throws IOException {
+                //  pd.dismiss();
+                if (!response.isSuccessful()) {
+                    Log.d("result", response.toString());
+                    throw new IOException("Unexpected code " + response);
+                } else {
+                    Log.d("result", response.toString());
+                    String responseBody = response.body().string();
+                    System.out.println("Dadi " + responseBody.toString());
+                    final JSONObject obj;
+                    try {
+                        obj = new JSONObject(responseBody);
+                        if (obj.getString("status").equals("true")) {
+                            Biowastageform.this.runOnUiThread(new Runnable() {
+                                public void run() {
+                                    System.out.println("JONDDDd " + obj.toString());
+                                    JSONObject result = null;
+                                    try {
+                                        result = obj.getJSONObject("barcode_data");
+                                        JSONObject hcf_master = result.getJSONObject("hcf_master");
+                                        barcodeNumber.setText(result.getString("barcode_number"));
+                                        driver_id.setText(result.getString("driver_id"));
+                                        cover_color_id.setText(result.getString("cover_color_id"));
+
+                                        hcf_master_id = result.getString("hcf_master_id");
+
+                                        JSONObject jsonObject = new JSONObject(ss.getString("data", "").toString());
+                                        System.out.println("DADi srinivasu " + jsonObject.toString());
+                                        JSONObject res = jsonObject.getJSONObject("user");
+
+                                        JSONObject truck = res.getJSONObject("routes_masters_driver");
+                                        SharedPreferences ss = getSharedPreferences("Login", MODE_PRIVATE);
+
+                                        truckid = ss.getString("truck_id", "");
+                                        routes_masters_driver_id = truck.getString("id");
+                                        if (result.getString("route_master_id") == null) {
+                                            Toast.makeText(getBaseContext(), "dadi route null ", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            route_master_id = result.getString("route_master_id");
+                                        }
+
+
+                                        Date c = Calendar.getInstance().getTime();
+                                        System.out.println("Current time => " + c);
+
+                                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                                        String formattedDate = df.format(c);
+                                        waste_collection_date.setText(formattedDate);
+                                        GPSTracker gpsTracker = new GPSTracker(Biowastageform.this);
+                                        if (gpsTracker.canGetLocation) {
+                                            System.out.println("loacotin update " + gpsTracker.getLatitude() + " longitude " + gpsTracker.getLongitude());
+                                            String x = String.valueOf(gpsTracker.getLatitude());
+                                            String xy = String.valueOf(gpsTracker.getLongitude());
+                                            Latitude.setText(x);
+                                            Longitude.setText(xy);
+                                        }
+
+                                        //hcf_master.getString(" facility_name");
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                }
+                            });
+
+
+                        } else {
+                            System.out.println("else part JONDDDd " + obj.toString());
+
+                        }
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
 
     }
 
