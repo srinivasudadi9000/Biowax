@@ -129,10 +129,10 @@ public class Login extends Activity implements View.OnClickListener {
 
 
         RequestBody formBody = new FormBody.Builder()
-                 .add("mobile_imei_number", "911637752174844")
-                //.add("mobile_imei_number", imenumber1.toString())
-                .add("password", "demo@biowax.com")
-                //.add("password", password_et.getText().toString())
+                //.add("mobile_imei_number", "865687032199968")
+                .add("mobile_imei_number", imenumber1.toString())
+                //.add("password", "demo@biowax.com")
+                .add("password", password_et.getText().toString())
                 /*.add("UserEmail", email_et.getText().toString())
                 .add("password", password_tv.getText().toString())*/
                 .build();
@@ -147,7 +147,7 @@ public class Login extends Activity implements View.OnClickListener {
         client.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(okhttp3.Call call, IOException e) {
-                login.setVisibility(View.GONE);
+                //login.setVisibility(View.GONE);
                 Log.d("result dadi", e.getMessage().toString());
                 e.printStackTrace();
                 Toast.makeText(getBaseContext(), "IMEI Number or password doesnt exist", Toast.LENGTH_SHORT).show();

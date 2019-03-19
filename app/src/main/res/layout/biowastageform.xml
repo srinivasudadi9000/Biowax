@@ -51,6 +51,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
             <ImageView
                 android:id="@+id/scanning_qrcode"
                 android:layout_width="100dp"
@@ -58,14 +59,35 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="15dp"
                 android:src="@drawable/qrcode" />
-            <CheckBox
-                android:id="@+id/saveandcontinue"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:layout_marginTop="20dp"
-                 android:text="Save and Continue"
+
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                 >
+
+                <CheckBox
+                    android:id="@+id/saveandcontinue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                     android:gravity="center"
+                    android:text="Save and Continue" />
+
+                <TextView
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:id="@+id/completed_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|start"
+                    android:text="Take Print"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
 
             <android.support.design.widget.TextInputLayout
@@ -75,15 +97,16 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="25dp"
                 android:layout_weight="1"
-                android:textColorHint="@color/black">
+                android:textColorHint="@color/black"
+                android:visibility="gone">
 
                 <EditText
-                    android:focusable="false"
                     android:id="@+id/waste_collection_date"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:background="@drawable/border"
                     android:ellipsize="start"
+                    android:focusable="false"
                     android:hint="Wastage collection date"
                     android:inputType="text"
                     android:paddingLeft="10dp"
@@ -104,13 +127,13 @@
                 app:boxBackgroundColor="@color/black">
 
                 <EditText
-                    android:focusable="false"
-
                     android:id="@+id/barcodeNumber"
+
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:background="@drawable/border"
                     android:ellipsize="start"
+                    android:focusable="false"
                     android:hint="Barcode Number"
                     android:inputType="text"
                     android:paddingLeft="10dp"
@@ -131,14 +154,14 @@
                 app:boxBackgroundColor="@color/black">
 
                 <EditText
-                    android:focusable="false"
-
                     android:id="@+id/cover_color_id"
+
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:background="@drawable/border"
                     android:ellipsize="start"
-                    android:hint="Cover Color Id"
+                    android:focusable="false"
+                    android:hint="Cover Color"
                     android:inputType="text"
                     android:paddingLeft="10dp"
                     android:textColor="@color/black"
@@ -155,6 +178,7 @@
                 android:layout_marginRight="25dp"
                 android:layout_weight="1"
                 android:textColorHint="@color/black"
+                android:visibility="gone"
                 app:boxBackgroundColor="@color/black">
 
                 <EditText
@@ -181,6 +205,7 @@
                 android:layout_marginRight="25dp"
                 android:layout_weight="1"
                 android:textColorHint="@color/black"
+                android:visibility="gone"
                 app:boxBackgroundColor="@color/black">
 
                 <EditText
@@ -192,7 +217,7 @@
                     android:hint="Approved By"
                     android:inputType="text"
                     android:paddingLeft="10dp"
-                    android:text="Dadi "
+                    android:text="  "
                     android:textColor="@color/black"
                     android:textColorHighlight="@color/black"
                     android:textColorHint="@color/black"
@@ -218,7 +243,7 @@
                     android:hint="Bag Weight"
                     android:inputType="numberDecimal"
                     android:paddingLeft="10dp"
-                    android:text="45"
+                    android:text="0"
                     android:textColor="@color/black"
                     android:textColorHighlight="@color/black"
                     android:textColorHint="@color/black"
@@ -228,12 +253,12 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="25dp"
                 android:layout_weight="1"
                 android:textColorHint="@color/black"
+                android:visibility="gone"
                 app:boxBackgroundColor="@color/black">
 
                 <EditText
@@ -254,12 +279,12 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="25dp"
                 android:layout_weight="1"
                 android:textColorHint="@color/black"
+                android:visibility="gone"
                 app:boxBackgroundColor="@color/black">
 
                 <EditText
@@ -322,8 +347,8 @@
                     android:hint="Authorized Person Name"
                     android:inputType="text"
                     android:paddingLeft="10dp"
+                    android:text="  "
                     android:textColor="@color/black"
-                    android:text="Dadi"
                     android:textColorHighlight="@color/black"
                     android:textColorHint="@color/black"
                     android:textColorLink="@color/black" />
@@ -336,8 +361,8 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="25dp"
                 android:layout_weight="1"
-                android:visibility="gone"
                 android:textColorHint="@color/black"
+                android:visibility="gone"
                 app:boxBackgroundColor="@color/black">
 
                 <EditText
@@ -361,9 +386,9 @@
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="25dp"
-                android:visibility="gone"
                 android:layout_weight="1"
                 android:textColorHint="@color/black"
+                android:visibility="gone"
                 app:boxBackgroundColor="@color/black">
 
                 <EditText
@@ -413,11 +438,11 @@
                     android:text="Yes" />
 
                 <RadioButton
-                    android:textIsSelectable="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="No" />
+                    android:text="No"
+                    android:textIsSelectable="true" />
             </RadioGroup>
 
 
@@ -427,8 +452,7 @@
                 android:layout_height="100dp"
                 android:layout_gravity="center"
                 android:layout_marginBottom="50dp"
-                android:src="@drawable/dustbin"
-                 />
+                android:src="@drawable/dustbin" />
 
         </LinearLayout>
 

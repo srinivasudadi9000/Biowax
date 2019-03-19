@@ -81,13 +81,14 @@ public class Biowastageform extends Activity implements View.OnClickListener {
     public EditText bag_weight_in_hcf;
     public EditText is_manual_input;
     public EditText hcf_authorized_person_name;
-    String hcf_master_id, truckid, route_master_id, routes_masters_driver_id, clicked = "not", pic = "null", confirm = "no";
+    String hcf_master_id, truckid, route_master_id, routes_masters_driver_id, cover_id, clicked = "not", pic = "null", confirm = "no";
     File otherImagefile2 = null;
     Uri iv_url2;
     int O_IMAGE2 = 2;
     CheckBox saveandcontinue;
     GPSTracker gps;
     String latitude, logiitude;
+    TextView completed_tv;
     // private PeopleTrackerService service;
     ProgressDialog progress;
     int aNumber = 0;
@@ -99,6 +100,8 @@ public class Biowastageform extends Activity implements View.OnClickListener {
         saveandcontinue = findViewById(R.id.saveandcontinue);
         scanning_qrcode = findViewById(R.id.scanning_qrcode);
         scanning_qrcode.setOnClickListener(this);
+        completed_tv = findViewById(R.id.completed_tv);
+        completed_tv.setOnClickListener(this);
         waste_image = findViewById(R.id.waste_image);
         waste_image.setOnClickListener(this);
         is_manual_input = findViewById(R.id.is_manual_input);
@@ -139,6 +142,11 @@ public class Biowastageform extends Activity implements View.OnClickListener {
                     Intent barcodescanner = new Intent(Biowastageform.this, Barcodescanner.class);
                     startActivity(barcodescanner);
                 } else {
+                    cover_color_id.setText("");
+                    ;
+                    bag_weight_in_hcf.setText("");
+                    hcf_authorized_person_name.setText("");
+
                     barcodeNumber.setText("");
                     barcodeNumber.getText().toString();
 
@@ -174,7 +182,10 @@ public class Biowastageform extends Activity implements View.OnClickListener {
                                     SharedPreferences ss = getSharedPreferences("Login", MODE_PRIVATE);
 
                                     driver_id.setText(ss.getString("driverid", ""));
-                                    cover_color_id.setText(js.getString("cover_color_id"));
+                                    cover_color_id.setText(js.getString("color_name"));
+
+                                    cover_id = js.getString("cover_color_id");
+
 
                                 }
 
@@ -229,6 +240,11 @@ public class Biowastageform extends Activity implements View.OnClickListener {
                 done();
                 Toast.makeText(getBaseContext(), "Successfully Record inserted", Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.completed_tv:
+                Intent garbagehistory = new Intent(Biowastageform.this, GarbageHistory.class);
+                startActivity(garbagehistory);
+                finish();
+                break;
         }
     }
 
@@ -275,7 +291,7 @@ public class Biowastageform extends Activity implements View.OnClickListener {
 
     public void done() {
         if (cover_color_id.getText().toString().length() == 0) {
-            showcase2("Form Alert", "Barcode not found in Database");
+            showcase2("Form Alert", "Barcode not found in server");
         } else {
 
             try {
@@ -425,9 +441,10 @@ public class Biowastageform extends Activity implements View.OnClickListener {
                 RequestBody.create(MediaType.parse("image"), getStringImage(otherImagefile2.getAbsolutePath())));
 */
 
-      /*  RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
+/*
+        RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
 
-                .addFormDataPart("hcf_master_id", "5")
+                .addFormDataPart("hcf_master_id", "")
                 .addFormDataPart("waste_collection_date", "2018-01-29")
                 .addFormDataPart("truck_id", "1")
                 .addFormDataPart("route_master_id", "14")
@@ -444,7 +461,8 @@ public class Biowastageform extends Activity implements View.OnClickListener {
                 .addFormDataPart("driver_imei_number", "123456789")
                 .addFormDataPart("is_sagregation_completed", "no")
                 .addFormDataPart("sagregation_image",  "")
-                .build();*/
+                .build();
+*/
         Date c = Calendar.getInstance().getTime();
         System.out.println("Current time => " + c);
 
@@ -458,7 +476,7 @@ public class Biowastageform extends Activity implements View.OnClickListener {
                 .add("truck_id", truckid)
                 .add("route_master_id", route_master_id)
                 .add("barcode_number", barcodeNumber.getText().toString())
-                .add("cover_color_id", cover_color_id.getText().toString())
+                .add("cover_color_id", cover_id)
                 .add("is_approval_required", is_approval_required.getText().toString())
                 .add("approved_by", "1")
                 .add("bag_weight_in_hcf", bag_weight_in_hcf.getText().toString())
@@ -491,6 +509,15 @@ public class Biowastageform extends Activity implements View.OnClickListener {
                 @Override
                 public void onFailure(okhttp3.Call call, IOException e) {
                     Log.d("result", e.getMessage().toString());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            // Stuff that updates the UI
+                            showDialog(Biowastageform.this, "Please try again server busy at this moment", "true");
+
+                        }
+                    });
                     e.printStackTrace();
                 }
 
@@ -541,6 +568,22 @@ public class Biowastageform extends Activity implements View.OnClickListener {
                                         showDialog(Biowastageform.this, "Sucessfully uploaded..", "true");
                                     }
                                 });
+
+                                runOnUiThread(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+
+                                        cover_color_id.setText("");
+                                        ;
+                                        bag_weight_in_hcf.setText("");
+                                        hcf_authorized_person_name.setText("");
+                                        // Stuff that updates the UI
+
+                                    }
+                                });
+
+
                             } else {
                                 DBHelper dbHelper = new DBHelper(Biowastageform.this);
                                 dbHelper.insertProject(latitude, logiitude, hcf_master_id, formattedDate, truckid, route_master_id, barcodeNumber.getText().toString()
@@ -553,14 +596,29 @@ public class Biowastageform extends Activity implements View.OnClickListener {
                                         ss.getString("trans", ""), "local", Biowastageform.this);
 
 
-                                System.out.println("JONDDDd " + obj.toString());
+                                /*System.out.println("JONDDDd " + obj.toString());
                                 System.out.println("JONDDDd " + obj.getString("token"));
-
+*/
                                 Biowastageform.this.scanning_qrcode.post(new Runnable() {
                                     public void run() {
-                                        showDialog(Biowastageform.this, "Sorry please try again..", "true");
+                                        showDialog(Biowastageform.this, "Record saved sucessfull in locally.", "true");
                                     }
                                 });
+
+                                runOnUiThread(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+
+                                        cover_color_id.setText("");
+                                        ;
+                                        bag_weight_in_hcf.setText("");
+                                        hcf_authorized_person_name.setText("");
+                                        // Stuff that updates the UI
+
+                                    }
+                                });
+
                             }
 
 
@@ -670,6 +728,15 @@ public class Biowastageform extends Activity implements View.OnClickListener {
                 Log.d("result", e.getMessage().toString());
                 e.printStackTrace();
                 pd.dismiss();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        // Stuff that updates the UI
+                        showDialog(Biowastageform.this, "Please try again server busy at this moment", "true");
+
+                    }
+                });
             }
 
             @Override
@@ -681,6 +748,7 @@ public class Biowastageform extends Activity implements View.OnClickListener {
                     throw new IOException("Unexpected code " + response);
                 } else {
                     pd.dismiss();
+
                     Log.d("result", response.toString());
                     String responseBody = response.body().string();
                     System.out.println("Dadi " + responseBody.toString());
@@ -701,22 +769,27 @@ public class Biowastageform extends Activity implements View.OnClickListener {
 
                                         driver_id.setText(ss.getString("driverid", ""));
 
-
+                                        route_master_id = ss.getString("driverid", "");
                                         hcf_master_id = result.getString("hcf_master_id");
                                         barcodeNumber.setText(result.getString("barcode_number"));
-                                        cover_color_id.setText(result.getString("cover_color_id"));
+
+
+                                        JSONObject covers_color_master = result.getJSONObject("covers_color_master");
+                                        cover_id = result.getString("cover_color_id");
+
+                                        cover_color_id.setText(covers_color_master.getString("color_name"));
 
                                         JSONObject jsonObject = new JSONObject(ss.getString("data", "").toString());
                                         System.out.println("DADi srinivasu " + jsonObject.toString());
                                         JSONObject res = jsonObject.getJSONObject("user");
 
                                         JSONObject truck = res.getJSONObject("routes_masters_driver");
-                                        routes_masters_driver_id = truck.getString("id");
-                                        if (result.getString("route_master_id") == null) {
+                                        //routes_masters_driver_id = truck.getString("id");
+                                        /*if (result.getString("route_master_id") == null) {
                                             Toast.makeText(getBaseContext(), "dadi route null ", Toast.LENGTH_SHORT).show();
                                         } else {
                                             route_master_id = result.getString("route_master_id");
-                                        }
+                                        }*/
 
 
                                         Date c = Calendar.getInstance().getTime();
