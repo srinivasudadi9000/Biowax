@@ -1,10 +1,10 @@
 package com.srinivas.biowax;
 
 public class Hospitals {
-    String h_name,h_code,h_address,route_name,mobile;
+    String h_name,h_code,h_address,route_name,mobile,hcf_id;
     Double h_lat,h_long;
 
-    public Hospitals(String h_name, String h_code, Double h_lat, Double h_long, String h_address,String route_name,String mobile) {
+    public Hospitals(String hcf_id,String h_name, String h_code, Double h_lat, Double h_long, String h_address,String route_name,String mobile) {
         this.h_name = h_name;
         this.h_code = h_code;
         this.h_lat = h_lat;
@@ -12,6 +12,14 @@ public class Hospitals {
         this.h_address = h_address;
         this.route_name = route_name;
         this.mobile = mobile;
+    }
+
+    public String getHcf_id() {
+        return hcf_id;
+    }
+
+    public void setHcf_id(String hcf_id) {
+        this.hcf_id = hcf_id;
     }
 
     public String getRoute_name() {

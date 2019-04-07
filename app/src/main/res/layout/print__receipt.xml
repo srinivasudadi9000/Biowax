@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.srinivas.Printer.Print_Receipt">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/colorPrimary">
+
+        <ImageView
+            android:id="@+id/history_back"
+            android:layout_width="50dp"
+            android:layout_height="45dp"
+            android:src="@drawable/back" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginRight="20dp"
+            android:gravity="center"
+            android:text="Print Receipt"
+            android:textColor="@color/white"
+            android:textSize="25dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+   <ScrollView
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="50dp"
+        android:background="@drawable/border"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/printer_img"
+             android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:src="@drawable/printer" />
+
+        <TextView
+            android:id="@+id/trans_code_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Transaction Code"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+        <TextView
+             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Weights   |   Color"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="end"
+            android:text="- - - - - - - - - - - - - - -  - - - - -  - - " />
+
+        <TextView
+            android:id="@+id/weights_tv"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Weight_1 : 0.0" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="end"
+            android:text="- - - - - - - - - - - - - - -  - - - - -  - - " />
+
+        <TextView
+            android:id="@+id/netweight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Net weight : 0.0"
+            android:textSize="20dp"
+            android:layout_marginBottom="50dp"
+            android:textStyle="bold" />
+        <TextView
+            android:layout_marginBottom="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="end"
+            android:text="Poweredby Schemax software" />
+
+    </LinearLayout>
+
+   </ScrollView>
+</LinearLayout>

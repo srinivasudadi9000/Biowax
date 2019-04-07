@@ -22,6 +22,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.srinivas.Helper.DBHelper;
 import com.srinivas.validations.Validations;
@@ -46,8 +47,8 @@ import static android.content.ContentValues.TAG;
 public class GarbageHistory extends Activity implements View.OnClickListener {
     RecyclerView hospitalb_rv;
     ImageView history_back;
-    ArrayList<Hospitalshistory> hospitalshistories;
-    Histroy_Adapter hospitals_adapter, hospitals_adapter2;
+    ArrayList<Transactions> Transactionss;
+    Transaction_Adapter transaction_adapter, hospitals_adapter2;
     Handler handler;
     private Runnable mRunnable;
     TextView latitude_tv, longitude_tv;
@@ -64,9 +65,7 @@ public class GarbageHistory extends Activity implements View.OnClickListener {
         longitude_tv = findViewById(R.id.longitude_tv);
         latitude_tv = findViewById(R.id.latitude_tv);
 
-        hospitalshistories = new ArrayList<Hospitalshistory>();
-        hospitals_adapter = new Histroy_Adapter(hospitalshistories, R.layout.history_single, getApplicationContext());
-        hospitalb_rv.setAdapter(hospitals_adapter);
+        Transactionss = new ArrayList<Transactions>();
 
         if (Validations.hasActiveInternetConnection(GarbageHistory.this)) {
             try {
@@ -82,7 +81,8 @@ public class GarbageHistory extends Activity implements View.OnClickListener {
             }
 
         } else {
-            getcheckins_from_local();
+            Toast.makeText(getBaseContext(),"Please check your internet connection",Toast.LENGTH_SHORT).show();
+          //  getcheckins_from_local();
         }
 
     }
@@ -98,7 +98,7 @@ public class GarbageHistory extends Activity implements View.OnClickListener {
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer" + ss.getString("access_token", ""))
-                .url("http://175.101.151.121:8001/api/hcfwastecollectiondataformobile")
+                .url("http://175.101.151.121:8002/api/hcfwastecollectiondataformobile")
                 .get()
                 .build();
 
@@ -131,20 +131,23 @@ public class GarbageHistory extends Activity implements View.OnClickListener {
                             JSONArray jsonArray = obj.getJSONArray("data");
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject res = jsonArray.getJSONObject(i);
-                                hospitalshistories.add(new Hospitalshistory(res.getString("hcf_master_id"),
-                                        res.getString("waste_collection_date"),
-                                        res.getString("barcode_number"),
-                                        res.getString("transaction_code")
-                                        , res.getString("cover_color_id"),
-                                        res.getString("is_approval_required"),
-                                        res.getString("approved_by"),
-                                        res.getString("bag_weight_in_hcf"),
-                                        res.getString("is_manual_input"),
-                                        res.getString("hcf_authorized_person_name"),
-                                        res.getString("is_sagregation_completed"),
-                                        res.getString("sagregation_image"), "", ""));
+                                Transactionss.add(new Transactions(res.getString("transaction_code"),
+                                        res.getString("transaction_ref"),
+                                        res.getString("transaction_num"),
+                                        res.getString("facility_name")
+                                        , res.getString("color_name")));
                             }
 
+                            runOnUiThread(new Runnable() {
+
+                                @Override
+                                public void run() {
+
+                                    // Stuff that updates the UI
+                                    transaction_adapter = new Transaction_Adapter(Transactionss, R.layout.transaction_single, getApplicationContext());
+                                    hospitalb_rv.setAdapter(transaction_adapter);
+                                }
+                            });
 
                         } else {
                             System.out.println("JONDDDd " + obj.toString());
@@ -157,16 +160,6 @@ public class GarbageHistory extends Activity implements View.OnClickListener {
                             });
                         }
 
-                        runOnUiThread(new Runnable() {
-
-                            @Override
-                            public void run() {
-
-                                // Stuff that updates the UI
-                                hospitals_adapter = new Histroy_Adapter(hospitalshistories, R.layout.history_single, getApplicationContext());
-                                hospitalb_rv.setAdapter(hospitals_adapter);
-                            }
-                        });
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -227,14 +220,6 @@ public class GarbageHistory extends Activity implements View.OnClickListener {
                         e.printStackTrace();
                     }
                 }
-                hospitalshistories.add(new Hospitalshistory(
-                        c.getString(c.getColumnIndex("hcf_master_id")), c.getString(c.getColumnIndex("waste_collection_date")),
-                        c.getString(c.getColumnIndex("barcode_number")), c.getString(c.getColumnIndex("longitude")),
-                        c.getString(c.getColumnIndex("truck_id")), c.getString(c.getColumnIndex("route_master_id")),
-                        c.getString(c.getColumnIndex("latitude")), c.getString(c.getColumnIndex("cover_color_id")),
-                        c.getString(c.getColumnIndex("is_approval_required")), c.getString(c.getColumnIndex("approved_by"))
-                        , c.getString(c.getColumnIndex("bag_weight_in_hcf")), c.getString(c.getColumnIndex("is_manual_input"))
-                        , c.getString(c.getColumnIndex("transno")), ""));
 
 
                 c.moveToNext();
@@ -244,14 +229,6 @@ public class GarbageHistory extends Activity implements View.OnClickListener {
 
        /* hospitals_adapter = new Histroy_Adapter(hospitalshistories, R.layout.history_single, getApplicationContext());
         hospitalb_rv.setAdapter(hospitals_adapter);*/
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                // Stuff that updates the UI
-                hospitals_adapter = new Histroy_Adapter(hospitalshistories, R.layout.history_single, getApplicationContext());
-                hospitalb_rv.setAdapter(hospitals_adapter);
-            }
-        });
 
 
         //finish();
@@ -329,7 +306,7 @@ public class GarbageHistory extends Activity implements View.OnClickListener {
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer" + ss.getString("access_token", ""))
-                .url("http://175.101.151.121:8001/api/addhcfwastecollectionfrommobile")
+                .url("http://175.101.151.121:8002/api/addhcfwastecollectionfrommobile")
                 .post(formBody)
                 .build();
 

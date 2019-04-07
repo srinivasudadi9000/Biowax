@@ -69,7 +69,7 @@ public class GarbageCollection extends Activity implements View.OnClickListener 
         }*/
         checkins = new ArrayList<Hospitals>();
         checkins_filter = new ArrayList<Hospitals>();
-        checkins.add(new Hospitals("Dadi veerinaidu college", "1002", 17.701001, 82.998878, "visakhapatnam", "Lane1", "8885270193"));
+       /* checkins.add(new Hospitals("Dadi veerinaidu college", "1002", 17.701001, 82.998878, "visakhapatnam", "Lane1", "8885270193"));
         checkins.add(new Hospitals("Lakshmi ganapathi temple", "1002", 17.704581, 82.997954, "visakhapatnam", "Lane2", "8885270193"));
         checkins.add(new Hospitals("Union Bank of india", "1002", 17.702920, 82.998180, "visakhapatnam", "Route3", "8885270193"));
         checkins.add(new Hospitals("Sai baba temple", "1002", 17.700445, 82.997803, "visakhapatnam", "Route4", "8885270193"));
@@ -80,7 +80,7 @@ public class GarbageCollection extends Activity implements View.OnClickListener 
         checkins.add(new Hospitals("Enadu office", "1002", 17.7391631, 83.3109891, "visakhapatnam", "Route 9", "8885270193"));
         checkins.add(new Hospitals("Maddipalem junction", "1002", 17.7362124, 83.3182955, "visakhapatnam", "Route 9", "8885270193"));
         checkins.add(new Hospitals("Gurudwara Junction", "1002", 17.7368127, 83.3051191, "visakhapatnam", "Route 5", "8885270193"));
-       /* hospitals_adapter = new Hospitals_Adapter(checkins, R.layout.hostpital_single, getApplicationContext());
+       *//* hospitals_adapter = new Hospitals_Adapter(checkins, R.layout.hostpital_single, getApplicationContext());
         hospitalb_rv.setAdapter(hospitals_adapter);
         hospitals_adapter.notifyDataSetChanged();
 */
@@ -93,23 +93,28 @@ public class GarbageCollection extends Activity implements View.OnClickListener 
         }
 
 
-        handler = new Handler();
+       /* handler = new Handler();
         handler.postDelayed(mRunnable = new Runnable() {
             public void run() {
 
                 checkins_filter.clear();
                 getlocationstatus();          // this method will contain your almost-finished HTTP calls
-                handler.postDelayed(this, 5000);
+                handler.postDelayed(this, 3000);
             }
         }, 3000);
+*/
 
-
+        try {
+            getRoutes();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        handler.removeCallbacks(mRunnable);
+        //handler.removeCallbacks(mRunnable);
     }
 
     @Override
@@ -161,13 +166,15 @@ public class GarbageCollection extends Activity implements View.OnClickListener 
 
             double distance = startPoint.distanceTo(endPoint);
             System.out.println("hoooooooooooo distance............. " + distance);
+/*
             System.out.println("Dadi location update distance " + distance(startPoint.getLatitude(), startPoint.getLongitude(),
                     checkins.get(i).getH_lat(), checkins.get(i).getH_long()));
+*/
             //checkins_filter.clear();
             if (distance(startPoint.getLatitude(), startPoint.getLongitude(),
                     checkins.get(i).getH_lat(), checkins.get(i).getH_long()) < 3) {
                 System.out.println("Location update " + checkins.get(i).getH_name());
-                checkins_filter.add(new Hospitals(checkins.get(i).getH_name(), checkins.get(i).getH_code(),
+                checkins_filter.add(new Hospitals(checkins.get(i).getHcf_id(),checkins.get(i).getH_name(), checkins.get(i).getH_code(),
                         checkins.get(i).getH_lat(), checkins.get(i).getH_long(), checkins.get(i).getH_address(),
                         checkins.get(i).getRoute_name(), checkins.get(i).getMobile()));
               /*  hospitals_adapter = new Hospitals_Adapter(checkins_filter, R.layout.hostpital_single, getApplicationContext());
@@ -215,7 +222,7 @@ public class GarbageCollection extends Activity implements View.OnClickListener 
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer" + ss.getString("access_token", ""))
-                .url("http://175.101.151.121:8001/api/routesscheduleformobile")
+                .url("http://175.101.151.121:8002/api/routesscheduleformobile")
                 .get()
                 .build();
 
@@ -243,22 +250,34 @@ public class GarbageCollection extends Activity implements View.OnClickListener 
                     try {
                         obj = new JSONObject(responseBody);
                         if (obj.getString("status").equals("true")) {
-                            System.out.println("JONDDDd " + obj.toString());
+                            System.out.println("JONDDDd sdfasdjflsadf" + obj.toString());
 
                             JSONArray jsonArray = obj.getJSONArray("data");
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject res = jsonArray.getJSONObject(i);
+                                String priority = res.getString("priority");
                                 JSONObject routes_master = res.getJSONObject("routes_master");
 
                                 JSONObject hos = res.getJSONObject("hcf_master");
-                                checkins.add(new Hospitals(hos.getString("facility_name"),
-                                        hos.getString("hcf_unique_code"),
+                                checkins.add(new Hospitals(hos.getString("id"),hos.getString("facility_name"),
+                                        priority,
                                         Double.valueOf(hos.getString("hcf_longitude")),
                                         Double.valueOf(hos.getString("hcf_lattitudue"))
                                         , hos.getString("hcf_address"), routes_master.getString("route_name"),
                                         hos.getString("contact_number")));
-                            }
 
+                                System.out.println("dadi see here "+hos.getString("contact_number"));
+
+                            }
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    hospitals_adapter = new Hospitals_Adapter(checkins, R.layout.hostpital_single, getApplicationContext());
+                                    hospitalb_rv.setAdapter(hospitals_adapter);
+                                    hospitals_adapter.notifyDataSetChanged();
+
+                                }
+                            });
                         } else {
                             System.out.println("JONDDDd " + obj.toString());
                             System.out.println("JONDDDd " + obj.getString("token"));
@@ -269,6 +288,8 @@ public class GarbageCollection extends Activity implements View.OnClickListener 
                                 }
                             });
                         }
+
+
 
 
                     } catch (JSONException e) {

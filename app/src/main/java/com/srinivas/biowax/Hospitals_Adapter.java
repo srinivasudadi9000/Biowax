@@ -39,7 +39,7 @@ public class Hospitals_Adapter extends RecyclerView.Adapter<Hospitals_Adapter.Ho
 
     @Override
     public void onBindViewHolder(@NonNull final Hospitals_Adapter.Hospital hospital, final int i) {
-        hospital.routename.setText(hospitals.get(i).getRoute_name());
+        hospital.routename.setText("Priority:"+hospitals.get(i).getH_code());
         hospital.hospitalname_tv.setText(hospitals.get(i).getH_name());
         hospital.contactno.setText(hospitals.get(i).getMobile());
         hospital.location.setText(hospitals.get(i).getH_address());
@@ -60,10 +60,19 @@ public class Hospitals_Adapter extends RecyclerView.Adapter<Hospitals_Adapter.Ho
                     transs.putString("hosid", hospitals.get(i).getH_code());
                     trans.commit();
                 }
-                Intent biowaxform = new Intent(context, Biowastageform.class);
-                biowaxform.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                biowaxform.putExtra("hcfcode",hospitals.get(i).getH_code());
-                context.startActivity(biowaxform);
+
+                SharedPreferences des = context.getSharedPreferences("Login", MODE_PRIVATE);
+                if (des.getString("type","").equals("Driver")){
+                    Intent biowaxform = new Intent(context, Biowastageform.class);
+                    biowaxform.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    biowaxform.putExtra("hcf_id",hospitals.get(i).getHcf_id());
+                    biowaxform.putExtra("hcfcode",hospitals.get(i).getH_code());
+                    context.startActivity(biowaxform);
+                }else {
+
+                }
+
+
 
             }
         });

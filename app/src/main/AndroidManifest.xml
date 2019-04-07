@@ -21,14 +21,14 @@
     <application
         android:allowBackup="true"
         android:hardwareAccelerated="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/etvb"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
+         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name="com.srinivas.Driver.Driverdetails"></activity>
-        <activity android:name="com.srinivas.Driver.Agentdetails"></activity>
+        <activity android:name="com.srinivas.Printer.Print_Receipt"></activity>
+        <activity android:name="com.srinivas.Driver.Driverdetails" />
+        <activity android:name="com.srinivas.Driver.Agentdetails" />
         <activity android:name=".History_View" />
         <activity android:name=".Barcodescanner" />
         <activity android:name=".Biowastageform" />
@@ -43,6 +43,7 @@
         <activity android:name=".LocationHistory" />
         <activity android:name=".Login" />
         <activity android:name=".Dashboard" />
+        <activity android:name=".Dashboard_Agent" />
         <activity android:name=".Home" />
         <activity android:name=".GarbageCollection" />
         <activity android:name=".GarbageInvoices" />
@@ -56,7 +57,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@layout/provider_paths" />
         </provider>
-
     </application>
 
 </manifest>

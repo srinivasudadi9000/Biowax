@@ -76,7 +76,7 @@ public class GarbageInvoices extends Activity {
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer" + ss.getString("access_token", ""))
-                .url("http://175.101.151.121:8001/api/getdueinvoicesformobile")
+                .url("http://175.101.151.121:8002/api/getdueinvoicesformobile")
                 .get()
                 .build();
 

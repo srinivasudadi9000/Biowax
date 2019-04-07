@@ -73,7 +73,7 @@ public class LocationHistory extends Activity implements View.OnClickListener {
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer" + ss.getString("access_token", ""))
-                .url("http://175.101.151.121:8001/api/hcfwastecollectiondataformobile")
+                .url("http://175.101.151.121:8002/api/hcfwastecollectiondataformobile")
                 .get()
                 .build();
 
