@@ -120,6 +120,9 @@ public class Biowastageform extends Activity implements View.OnClickListener {
         Latitude = findViewById(R.id.Latitude);
         driver_id = findViewById(R.id.driver_id);
 
+        SharedPreferences.Editor hcfid = getSharedPreferences("HCFID",MODE_PRIVATE).edit();
+        hcfid.putString("hcfid",getIntent().getStringExtra("hcf_id"));
+        hcfid.commit();
         gps = new GPSTracker(this);
         if (!gps.isGPSEnabled && !gps.isNetworkEnabled) {
             Log.d("networkd", "false");
@@ -185,10 +188,7 @@ public class Biowastageform extends Activity implements View.OnClickListener {
                                     cover_color_id.setText(js.getString("color_name"));
 
                                     cover_id = js.getString("cover_color_id");
-
-
                                 }
-
 
                             }
 
@@ -242,7 +242,7 @@ public class Biowastageform extends Activity implements View.OnClickListener {
                     showcase2("Form Alert", "Please Enter Weight should not be null ");
                 } else {
                     done();
-                    Toast.makeText(getBaseContext(), "Successfully Record inserted", Toast.LENGTH_SHORT).show();
+                  //  Toast.makeText(getBaseContext(), "Successfully Record inserted", Toast.LENGTH_SHORT).show();
                 }
 
                 break;
@@ -270,7 +270,8 @@ public class Biowastageform extends Activity implements View.OnClickListener {
                         pd.setIndeterminate(true);
                         pd.setCancelable(false);
                         pd.show();
-                        getBarcodeDetails(barcodeNumber.getText().toString());
+                        SharedPreferences hcfid = getSharedPreferences("HCFID",MODE_PRIVATE);
+                        getBarcodeDetails(barcodeNumber.getText().toString()+hcfid.getString("hcfid",""));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -292,7 +293,7 @@ public class Biowastageform extends Activity implements View.OnClickListener {
 
        /* barcodeNumber.setText("BARCODE-87");
         cover_color_id.setText("2");*/
-        Toast.makeText(getBaseContext(), "Dadi Restart here ", Toast.LENGTH_SHORT).show();
+      //  Toast.makeText(getBaseContext(), "Dadi Restart here ", Toast.LENGTH_SHORT).show();
     }
 
     public void done() {
@@ -508,7 +509,7 @@ public class Biowastageform extends Activity implements View.OnClickListener {
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer" + ss.getString("access_token", ""))
-                .url("http://175.101.151.121:8002/api/addhcfwastecollectionfrommobile")
+                .url("http://175.101.151.121:8001/api/addhcfwastecollectionfrommobile")
                 .post(formBody)
                 .build();
 
@@ -732,7 +733,7 @@ public class Biowastageform extends Activity implements View.OnClickListener {
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer" + ss.getString("access_token", ""))
-                .url("http://175.101.151.121:8002/api/barcodedetails/" + barcodeno)
+                .url("http://175.101.151.121:8001/api/barcodedetails/" + barcodeno)
                 .get()
                 .build();
 
@@ -746,7 +747,6 @@ public class Biowastageform extends Activity implements View.OnClickListener {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
                         // Stuff that updates the UI
                         showDialog(Biowastageform.this, "Please try again server busy at this moment", "true");
 
@@ -1125,7 +1125,6 @@ public class Biowastageform extends Activity implements View.OnClickListener {
         final SharedPreferences ss = getSharedPreferences("Login", MODE_PRIVATE);
         // avoid creating several instances, should be singleon
         OkHttpClient client = new OkHttpClient();
-        SharedPreferences sss = getSharedPreferences("Login", MODE_PRIVATE);
 
         Date c = Calendar.getInstance().getTime();
         System.out.println("Current time => " + c);
@@ -1133,20 +1132,20 @@ public class Biowastageform extends Activity implements View.OnClickListener {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         String formattedDate = df.format(c);
 
-        RequestBody formBody = new FormBody.Builder()
-                .add("route_id", "865687032199968")
+         RequestBody formBody = new FormBody.Builder()
+                .add("route_id", ss.getString("routeid",""))
                 .add("hcf_id", getIntent().getStringExtra("hcfcode"))
-                .add("role_type", "demo@biowax.com")
-                .add("user_id", sss.getString("user_id",""))
-                .add("visited_time",formattedDate)
-                .add("wastage_available",intime)
+                .add("role_type", ss.getString("rollid",""))
+                .add("user_id", ss.getString("user_id", ""))
+                .add("visited_time", formattedDate)
+                .add("wastage_available", intime)
                 .build();
 
         Request request = new Request.Builder()
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer" + ss.getString("access_token", ""))
-                .url("http://175.101.151.121:8002/api/addhcfvisitlog")
+                .url("http://175.101.151.121:8001/api/addhcfvisitlog")
                 .post(formBody)
                 .build();
 

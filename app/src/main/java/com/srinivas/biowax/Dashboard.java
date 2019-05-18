@@ -2,7 +2,9 @@ package com.srinivas.biowax;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -20,6 +22,8 @@ import android.widget.Toast;
 
 import com.srinivas.Driver.Agentdetails;
 import com.srinivas.Driver.Driverdetails;
+import com.srinivas.validations.IntentIntegrator;
+import com.srinivas.validations.IntentResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -69,7 +73,7 @@ public class Dashboard extends Activity implements View.OnClickListener {
                     android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION,
                     android.Manifest.permission.ACCESS_NETWORK_STATE}, 0);
         } else {
-            Toast.makeText(getBaseContext(), "Else Part partd", Toast.LENGTH_SHORT).show();
+          //  Toast.makeText(getBaseContext(), "Else Part partd", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -80,7 +84,7 @@ public class Dashboard extends Activity implements View.OnClickListener {
                 grantResults[2] == PackageManager.PERMISSION_GRANTED && grantResults[3] == PackageManager.PERMISSION_GRANTED) {
             Log.v(TAG, "Permission: " + permissions[0] + "was " + grantResults[0]);
             //resume tasks needing this permission
-            Toast.makeText(getBaseContext(), "asking permission", Toast.LENGTH_SHORT).show();
+           // Toast.makeText(getBaseContext(), "asking permission", Toast.LENGTH_SHORT).show();
 
 
         } else {
@@ -88,7 +92,7 @@ public class Dashboard extends Activity implements View.OnClickListener {
                     android.Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,
                     android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION,
                     android.Manifest.permission.ACCESS_NETWORK_STATE}, 0);
-            Toast.makeText(getBaseContext(), "Else Part I think all permission granted", Toast.LENGTH_SHORT).show();
+          //  Toast.makeText(getBaseContext(), "Else Part I think all permission granted", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -103,6 +107,14 @@ public class Dashboard extends Activity implements View.OnClickListener {
         }
     }
 
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+        if (scanResult != null) {
+            // handle scan result
+        }
+        // else continue with any other code you need in the method
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -110,6 +122,7 @@ public class Dashboard extends Activity implements View.OnClickListener {
                 vibrate();
                 Intent garbagecollection = new Intent(Dashboard.this, GarbageCollection.class);
                 startActivity(garbagecollection);
+
                 break;
             case R.id.history_ll:
                 vibrate();
@@ -120,12 +133,21 @@ public class Dashboard extends Activity implements View.OnClickListener {
                 vibrate();
                 Intent locationhistory = new Intent(Dashboard.this, LocationHistory.class);
                 startActivity(locationhistory);
+
                 break;
             case R.id.driverinfo_ll:
                 vibrate();
-                 Intent driver = new Intent(Dashboard.this, Driverdetails.class);
-                //Intent driver = new Intent(Dashboard.this, Agentdetails.class);
-                startActivity(driver);
+                SharedPreferences ss = getSharedPreferences("Login", MODE_PRIVATE);
+                System.out.println("Dadi see dashboard " + ss.getString("type", ""));
+                if (ss.getString("type", "").equals("Driver")) {
+                    Intent driver = new Intent(Dashboard.this, Driverdetails.class);
+                    startActivity(driver);
+                } else {
+                    Intent driver = new Intent(Dashboard.this, Agentdetails.class);
+                    startActivity(driver);
+                }
+
+
                 break;
             case R.id.receipt_ll:
                 vibrate();
@@ -161,7 +183,7 @@ public class Dashboard extends Activity implements View.OnClickListener {
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer" + ss.getString("access_token", ""))
-                .url("http://175.101.151.121:8002/api/hcfdetailsformobile")
+                .url("http://175.101.151.121:8001/api/hcfdetailsformobile")
                 .get()
                 .build();
 
@@ -192,12 +214,11 @@ public class Dashboard extends Activity implements View.OnClickListener {
                             barcodes.commit();
 
 
-
                         } else {
                             System.out.println("JONDDDd " + obj.toString());
                             System.out.println("JONDDDd " + obj.getString("token"));
 
-                         }
+                        }
 
 
                     } catch (JSONException e) {
@@ -209,4 +230,68 @@ public class Dashboard extends Activity implements View.OnClickListener {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        // super.onBackPressed();
+       // Toast.makeText(getBaseContext(), "Dadi", Toast.LENGTH_SHORT).show();
+        AlertDialog.Builder builder
+                = new AlertDialog
+                .Builder(Dashboard.this);
+
+        // Set the message show for the Alert time
+        builder.setMessage("Do you want to exit ?");
+
+        // Set Alert Title
+        builder.setTitle("Alert !");
+
+        // Set Cancelable false
+        // for when the user clicks on the outside
+        // the Dialog Box then it will remain show
+        builder.setCancelable(false);
+
+        // Set the positive button with yes name
+        // OnClickListener method is use of
+        // DialogInterface interface.
+
+        builder
+                .setPositiveButton(
+                        "Yes",
+                        new DialogInterface
+                                .OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+
+                                // When the user click yes button
+                                // then app will close
+                                finish();
+                            }
+                        });
+
+        // Set the Negative button with No name
+        // OnClickListener method is use
+        // of DialogInterface interface.
+        builder
+                .setNegativeButton(
+                        "No",
+                        new DialogInterface
+                                .OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+
+                                // If user click no
+                                // then dialog box is canceled.
+                                dialog.cancel();
+                            }
+                        });
+
+        // Create the Alert dialog
+        AlertDialog alertDialog = builder.create();
+
+        // Show the Alert Dialog box
+        alertDialog.show();
+    }
 }

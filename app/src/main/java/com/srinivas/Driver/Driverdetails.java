@@ -35,13 +35,15 @@ public class Driverdetails extends Activity implements View.OnClickListener {
             JSONObject jsonObject = new JSONObject(ss.getString("data", "").toString());
             System.out.println("DADi srinivasu "+jsonObject.toString());
             JSONObject res = jsonObject.getJSONObject("user");
+            JSONObject routes_masters_driver = res.getJSONObject("routes_masters_driver");
+
             employeecode.setText(res.getString("employee_code"));
             employephone.setText(res.getString("mobile_number"));
             employeename.setText(res.getString("employee_name"));
             email_id.setText(res.getString("email_id"));;
 
             JSONObject truck = res.getJSONObject("routes_masters_driver");
-            rootname.setText(truck.getString("route_name"));
+            rootname.setText(truck.getString("route_name") + " ( " + routes_masters_driver.getString("route_number") + " )");
         } catch (JSONException e) {
             e.printStackTrace();
         }

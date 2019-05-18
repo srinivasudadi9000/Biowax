@@ -61,6 +61,7 @@ public class Home extends Activity {
             public void onClick(View v) {
                 Intent subhome = new Intent(Home.this, Login.class);
                 startActivity(subhome);
+                finish();
             }
         });
        /* Timer swipeTimer = new Timer();

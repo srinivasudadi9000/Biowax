@@ -303,6 +303,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
@@ -329,7 +330,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
+                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp"
@@ -423,6 +424,7 @@
                 android:textSize="18dp" />
 
             <RadioGroup
+                android:layout_marginBottom="50dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
@@ -447,6 +449,7 @@
 
 
             <ImageView
+                android:visibility="gone"
                 android:id="@+id/waste_image"
                 android:layout_width="100dp"
                 android:layout_height="100dp"

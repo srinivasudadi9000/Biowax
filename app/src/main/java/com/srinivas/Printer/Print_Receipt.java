@@ -32,7 +32,7 @@ TextView trans_code_tv,weights_tv,netweight;
     ProgressDialog pd;
     String def;
     ImageView printer_img,history_back;
-    int sum=0;
+    Double sum=0.0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +43,7 @@ TextView trans_code_tv,weights_tv,netweight;
         netweight = findViewById(R.id.netweight);
         def =getIntent().getStringExtra("transaction_code").toString();
         trans_code_tv.setText("Transaction Code \n "+def+"\n\n");
-        Toast.makeText(getBaseContext(),getIntent().getStringExtra("transaction_code"),Toast.LENGTH_SHORT).show();
+       // Toast.makeText(getBaseContext(),getIntent().getStringExtra("transaction_code"),Toast.LENGTH_SHORT).show();
         history_back = findViewById(R.id.history_back);
         history_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,7 +95,7 @@ TextView trans_code_tv,weights_tv,netweight;
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer" + ss.getString("access_token", ""))
                 //.url("http://175.101.151.121:8001/api/hcfwastecollectionviewformobile/EVB/TRANSACTION/35.1")
-                 .url("http://175.101.151.121:8002/api/hcfwastecollectionviewformobile/"+xx.toString())
+                 .url("http://175.101.151.121:8001/api/hcfwastecollectionviewformobile/"+xx.toString())
                 .get()
                 .build();
 
@@ -130,15 +130,16 @@ TextView trans_code_tv,weights_tv,netweight;
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject res = jsonArray.getJSONObject(i);
                                 String x = String.valueOf(i+1);
-                                vall = vall + "\n "+res.getString("")+"Weight_ "+x+"\t\t : \t"+res.getString("bag_weight_in_hcf")+".00";
-                                 sum = sum+ Integer.parseInt(res.getString("bag_weight_in_hcf"));
+                                vall = vall + "\n "+"Weight_"+x+"\t\t : \t"+res.getString("bag_weight_in_hcf")+".00";
+                                int val_t = (int) res.getDouble("bag_weight_in_hcf");
+                                sum = sum+ val_t;
                              }
                             final String finalVall = vall;
                             runOnUiThread(new Runnable() {
 
                                 @Override
                                 public void run() {
-                                   Toast.makeText(getBaseContext(),finalVall,Toast.LENGTH_SHORT).show();
+                                 //  Toast.makeText(getBaseContext(),finalVall,Toast.LENGTH_SHORT).show();
                                     weights_tv.setText(finalVall);
                                     String xxx = String.valueOf(sum);
                                     netweight.setText("Total Net Weight :"+xxx);

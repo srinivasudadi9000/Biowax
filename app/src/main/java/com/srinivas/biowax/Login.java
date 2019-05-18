@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import com.srinivas.Helper.DBHelper;
 import com.srinivas.Spin.LoadingSpin;
+import com.srinivas.validations.IntentIntegrator;
 import com.srinivas.validations.Validations;
 
 import org.json.JSONArray;
@@ -42,6 +43,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 import static android.content.ContentValues.TAG;
+import static android.telephony.MbmsDownloadSession.RESULT_CANCELLED;
 
 public class Login extends Activity implements View.OnClickListener {
     Button login_btn;
@@ -69,7 +71,7 @@ public class Login extends Activity implements View.OnClickListener {
             TelephonyManager mTelephony = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
             imenumber1 = mTelephony.getDeviceId();
 
-            Toast.makeText(getBaseContext(), imenumber1, Toast.LENGTH_SHORT).show();
+           // Toast.makeText(getBaseContext(), imenumber1, Toast.LENGTH_SHORT).show();
         }
         DBHelper dbHelper = new DBHelper(Login.this);
     }
@@ -83,11 +85,23 @@ public class Login extends Activity implements View.OnClickListener {
             //resume tasks needing this permission
             TelephonyManager mTelephony = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
             imenumber1 = mTelephony.getDeviceId();
-            Toast.makeText(getBaseContext(), imenumber1, Toast.LENGTH_SHORT).show();
+          //  Toast.makeText(getBaseContext(), imenumber1, Toast.LENGTH_SHORT).show();
 
         }
     }
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        System.out.println("loginqr"+requestCode);
+        System.out.println("loginqr"+resultCode);
+        System.out.println("loginqr"+data);
+        String contentss = data.getStringExtra("SCAN_RESULT");
+        System.out.println("Srinivasu see hre "+contentss);
+        if (data != null){
+            String contents = data.getStringExtra("SCAN_RESULT");
+            System.out.println("Srinivasu see hre "+contents);
+        }
+    }
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -111,11 +125,12 @@ public class Login extends Activity implements View.OnClickListener {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                      /*  IntentIntegrator integrator = new IntentIntegrator(Login.this);
+                        integrator.initiateScan();*/
                     } else {
                         Toast.makeText(getBaseContext(), "Please check network connection", Toast.LENGTH_SHORT).show();
                     }
                 }
-
                /* Intent dashboard = new Intent(Login.this, Dashboard.class);
                 startActivity(dashboard);*/
                 //    "message": "Unauthenticated."
@@ -132,16 +147,16 @@ public class Login extends Activity implements View.OnClickListener {
 
         RequestBody formBody = new FormBody.Builder()
                  .add("mobile_imei_number", "865687032199968")
-                //.add("mobile_imei_number", imenumber1.toString())
-                .add("password", "test@123")
-                //.add("password", password_et.getText().toString())
+                 //.add("mobile_imei_number", imenumber1.toString())
+                 //.add("password", "test@123")
+                  .add("password", password_et.getText().toString())
                 /*.add("UserEmail", email_et.getText().toString())
                 .add("password", password_tv.getText().toString())*/
                 .build();
         Request request = new Request.Builder()
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
-                .url("http://175.101.151.121:8002/api/mobilelogin?")
+                .url("http://175.101.151.121:8001/api/mobilelogin?")
                 .post(formBody)
                 .build();
 
@@ -174,7 +189,7 @@ public class Login extends Activity implements View.OnClickListener {
                             login.setVisibility(View.GONE);
                             // Stuff that updates the UI
                             Toast.makeText(getBaseContext(), "IMEI Number or password doesnt exist", Toast.LENGTH_SHORT).show();
-                            showDialog(Login.this, "Please Contact Admin IMEI Number: " + imenumber1 + " Thankyou", "true");
+                            showDialog(Login.this, "IMEI Number or password doesnt exist Please Contact Admin IMEI Number: " + imenumber1 + " Thankyou", "true");
                         }
                     });
 
@@ -190,27 +205,41 @@ public class Login extends Activity implements View.OnClickListener {
                         if (obj.getString("status").equals("true")) {
                             System.out.println("JONDDDd " + obj.toString());
                             JSONObject user = obj.getJSONObject("user");
-                            JSONObject routes_masters_driver = user.getJSONObject("routes_masters_driver");
-                            String driverid = routes_masters_driver.getString("id");
 
-                            String truck_id = routes_masters_driver.getString("truck_id");
+                            if (!user.getString("routes_masters_driver").equals("null")){
+                                JSONObject routes_masters_driver = user.getJSONObject("routes_masters_driver");
+                                JSONObject user1 = user.getJSONObject("user");
 
-                            SharedPreferences.Editor ss = getSharedPreferences("Login", MODE_PRIVATE).edit();
-                            ss.putString("type",user.getString("employee_type"));
-                            ss.putString("type",user.getString("employee_type"));
-                            ss.putString("user_id",user.getString("user_id"));
-                            ss.putString("access_token", obj.getString("access_token"));
-                            ss.putString("driverid", driverid);
-                            ss.putString("truck_id", truck_id);
-                            ss.putString("data", obj.toString());
-                            ss.commit();
+                                String driverid = routes_masters_driver.getString("id");
 
-                            if (user.getString("employee_type").equals("Driver")){
-                                Intent dashboard = new Intent(Login.this, Dashboard_Agent.class);
-                                startActivity(dashboard);
+                                String truck_id = routes_masters_driver.getString("truck_id");
+
+                                SharedPreferences.Editor ss = getSharedPreferences("Login", MODE_PRIVATE).edit();
+                                ss.putString("type",user.getString("employee_type"));
+                                ss.putString("user_id",user.getString("user_id"));
+                                ss.putString("access_token", obj.getString("access_token"));
+                                ss.putString("driverid", driverid);
+                                ss.putString("truck_id", truck_id);
+                                ss.putString("routeid",routes_masters_driver.getString("route_number"));
+                                ss.putString("rollid",user1.getString("role_id"));
+                                ss.putString("data", obj.toString());
+                                ss.commit();
+
+                                if (user.getString("employee_type").equals("Driver")){
+                                    Intent dashboard = new Intent(Login.this, Dashboard_Agent.class);
+                                    startActivity(dashboard);
+                                    finish();
+                                }else {
+                                    Intent dashboard = new Intent(Login.this, Dashboard.class);
+                                    startActivity(dashboard);
+                                    finish();
+                                }
                             }else {
-                                Intent dashboard = new Intent(Login.this, Dashboard.class);
-                                startActivity(dashboard);
+                                Login.this.login_btn.post(new Runnable() {
+                                    public void run() {
+                                        showDialog(Login.this, "No Route's Assigned for this account", "true");
+                                    }
+                                });
                             }
 
                         } else {
@@ -219,7 +248,7 @@ public class Login extends Activity implements View.OnClickListener {
 
                             Login.this.login_btn.post(new Runnable() {
                                 public void run() {
-                                    showDialog(Login.this, "Unauthorized user", "true");
+                                    showDialog(Login.this, "IMEI Number or password doesnt exist", "true");
                                 }
                             });
                         }
@@ -227,7 +256,15 @@ public class Login extends Activity implements View.OnClickListener {
 
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        Toast.makeText(getBaseContext(), "IMEI Number or password doesnt exist", Toast.LENGTH_SHORT).show();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                 // Stuff that updates the UI
+                                Toast.makeText(getBaseContext(), "IMEI Number or password doesnt exist", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+
                     }
                 }
             }
@@ -312,7 +349,7 @@ public class Login extends Activity implements View.OnClickListener {
                         for (int i = 0; i < records.length(); i++) {
                             JSONObject res = records.getJSONObject(i);
                             System.out.println(res.toString());
-                            if (res.getString("Facultyid").equals("admin")) {
+                            if (res.getString("Facultyid").equals("admin2")) {
                                 result = true;
                                 break;
                             } else {
